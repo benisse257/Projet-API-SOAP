@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<!-- Tableau de bord utilisateur FitTracker — Vue d'ensemble des statistiques et progrès -->
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>FitTracker — Dashboard</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<!-- ===== BARRE DE NAVIGATION ===== -->
+<nav>
+  <div class="logo">FitTracker</div>
+
+  <div class="nav-links">
+    <a href="/dashboard" class="active">Dashboard</a>
+    <a href="/exercices">Exercices</a>
+    <a href="/categories">Catégories</a>
+    <a href="/seances">Mes séances</a>
+    <a href="/programmes">Programmes</a>
+    <a href="/objectifs">Objectifs</a>
+    <a href="/historique">Historique</a>
+    <a href="/users" class="nav-admin" hidden>Utilisateurs</a>
+    <span class="nom-user" id="nomUser"></span>
+    <button class="btn-deconnexion" onclick="seDeconnecter()">Déconnexion</button>
+  </div>
+</nav>
+<!-- ===== CONTENU PRINCIPAL ===== -->
+<main>
+  <h2>Tableau de bord</h2>
+
+  <!-- Résumé rapide des statistiques -->
+  <div id="resume-stats" class="stats-resume"></div>
+
+  <!-- ===== STATISTIQUES HEBDOMADAIRES ET MENSUELLES ===== -->
+  <div class="stats-row-2">
+    <div class="stats-col">
+      <h3>Cette semaine</h3>
+      <div class="stats-grid-3">
+        <div class="stat-carte stat-blue">
+          <div class="stat-icon">🏋️</div>
+          <h3 id="statSeances">0</h3>
+          <p>Séances</p>
+        </div>
+        <div class="stat-carte stat-orange">
+          <div class="stat-icon">🔥</div>
+          <h3 id="statCalories">0</h3>
+          <p>Calories</p>
+        </div>
+        <div class="stat-carte stat-purple">
+          <div class="stat-icon">⏱️</div>
+          <h3 id="statDuree">0</h3>
+          <p>Minutes</p>
+        </div>
+      </div>
+      <div id="compSemaine" class="comp-bar"></div>
+    </div>
+    <div class="stats-col">
+      <h3>Ce mois</h3>
+      <div class="stats-grid-3">
+        <div class="stat-carte stat-blue">
+          <div class="stat-icon">🏋️</div>
+          <h3 id="statSeancesMonth">0</h3>
+          <p>Séances</p>
+        </div>
+        <div class="stat-carte stat-orange">
+          <div class="stat-icon">🔥</div>
+          <h3 id="statCaloriesMonth">0</h3>
+          <p>Calories</p>
+        </div>
+        <div class="stat-carte stat-purple">
+          <div class="stat-icon">⏱️</div>
+          <h3 id="statDureeMonth">0</h3>
+          <p>Minutes</p>
+        </div>
+      </div>
+      <div id="compMois" class="comp-bar"></div>
+    </div>
+  </div>
+
+  <!-- ===== GRAPHIQUES D'ÉVOLUTION ===== -->
+  <div class="stats-row-2">
+    <div class="graphique-container">
+      <canvas id="section-chart-semaine" height="240"></canvas>
+    </div>
+    <div class="graphique-container">
+      <canvas id="section-chart-mois" height="240"></canvas>
+    </div>
+  </div>
+
+  <!-- ===== OBJECTIFS EN COURS ET DERNIERS ENTRAÎNEMENTS ===== -->
+  <div class="stats-row-2">
+    <div id="section-objectifs" class="stats-col">
+      <h3>Objectifs en cours</h3>
+      <div id="objectifsContainer"></div>
+    </div>
+    <div id="section-entrainements" class="stats-col">
+      <h3>Derniers entraînements</h3>
+      <div class="tableau-container">
+        <table>
+          <thead><tr><th>Date</th><th>Séance</th><th>Durée</th><th>Calories</th></tr></thead>
+          <tbody id="dernierEntrainement"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Graphique des exercices les plus pratiqués -->
+  <div class="graphique-container">
+    <canvas id="section-chart-top" height="220"></canvas>
+  </div>
+</main>
+<!-- ===== SCRIPTS ===== -->
+<script src="../js/commun.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/dashboard.js"></script>
+</body>
+</html>

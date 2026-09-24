@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!-- Page historique FitTracker — Consultation de l'historique des entraînements avec filtrage par dates -->
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>FitTracker — Historique</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<!-- ===== BARRE DE NAVIGATION ===== -->
+<nav>
+  <div class="logo">FitTracker</div>
+  <div class="nav-links nav-admin" hidden>
+ 
+  <div class="nav-links nav-sportif">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/exercices">Exercices</a>
+    <a href="/categories">Catégories</a>
+    <a href="/seances">Mes séances</a>
+    <a href="/programmes">Programmes</a>
+  
+    <a href="/objectifs">Objectifs</a>
+    <a href="/historique" class="active">Historique</a>
+    <span class="nom-user" id="nomUser"></span>
+    <button class="btn-deconnexion" onclick="seDeconnecter()">Déconnexion</button>
+  </div>
+</nav>
+<!-- ===== CONTENU PRINCIPAL ===== -->
+<main>
+  <h2>Historique des entraînements</h2>
+
+  <!-- ===== FILTRE PAR PÉRIODE ===== -->
+  <div class="barre-actions">
+    <form id="form-filtre-historique">
+      <div class="filtres">
+        <input type="date" id="filtre-date-debut" placeholder="Date de début">
+        <input type="date" id="filtre-date-fin" placeholder="Date de fin">
+        <button type="submit" class="btn-bleu">Filtrer</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Liste de l'historique des entraînements (chargée dynamiquement) -->
+  <div id="liste-historique" class="liste-historique"></div>
+</main>
+
+<!-- ===== SCRIPTS ===== -->
+<script src="../js/commun.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/historique.js"></script>
+</body>
+</html>

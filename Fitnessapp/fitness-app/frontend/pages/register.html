@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<!-- Page d'inscription FitTracker — Création de compte utilisateur avec profil personnel -->
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitTracker — Inscription</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body class="auth-body">
+
+  <div class="auth-split">
+    <!-- ===== PANNEAU VISUEL (côté gauche) ===== -->
+    <div class="auth-visual">
+      <div class="auth-visual-bg"></div>
+      <div class="auth-visual-content">
+        <a href="/" class="auth-visual-logo">FitTracker</a>
+        <h2>Rejoignez<br><span class="hero-gradient">FitTracker</span></h2>
+        <p>Créez votre compte et commencez à transformer votre routine sportive dès aujourd'hui.</p>
+        <!-- Liste des fonctionnalités mises en avant -->
+        <div class="auth-visual-features">
+          <div class="auth-visual-feature">
+            <span class="auth-vf-icon">🏋️</span>
+            <span>Catalogue de 50+ exercices</span>
+          </div>
+          <div class="auth-visual-feature">
+            <span class="auth-vf-icon">📈</span>
+            <span>Suivi de progression avancé</span>
+          </div>
+          <div class="auth-visual-feature">
+            <span class="auth-vf-icon">💪</span>
+            <span>Programmes sur mesure</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PANNEAU FORMULAIRE D'INSCRIPTION ===== -->
+    <div class="auth-panel">
+      <div class="auth-panel-inner auth-panel-scroll">
+        <a href="/" class="auth-mobile-logo">FitTracker</a>
+        <div class="auth-form-header">
+          <h1>Créer un compte</h1>
+          <p>Remplissez vos informations pour démarrer votre aventure fitness</p>
+        </div>
+
+        <!-- Formulaire d'inscription (identifiants + profil sportif) -->
+        <div class="auth-form-body">
+          <div class="auth-field">
+            <label for="i-nom">Nom complet</label>
+            <div class="auth-input-wrap">
+              <svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <input type="text" id="i-nom" placeholder="Jean Dupont" autocomplete="name">
+            </div>
+          </div>
+
+          <div class="auth-field">
+            <label for="i-email">Adresse email</label>
+            <div class="auth-input-wrap">
+              <svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <input type="email" id="i-email" placeholder="exemple@email.com" autocomplete="email">
+            </div>
+          </div>
+
+          <div class="auth-field">
+            <label for="i-mdp">Mot de passe</label>
+            <div class="auth-input-wrap">
+              <svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input type="password" id="i-mdp" placeholder="6 caractères minimum" autocomplete="new-password">
+              <!-- Bouton d'affichage/masquage du mot de passe -->
+              <button type="button" class="auth-eye-btn" onclick="togglePassword('i-mdp', this)" aria-label="Afficher le mot de passe">
+                <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Champs du profil physique (âge, poids, taille) -->
+          <div class="auth-row-3">
+            <div class="auth-field">
+              <label for="i-age">Âge</label>
+              <div class="auth-input-wrap">
+                <input type="number" id="i-age" placeholder="25" min="10" max="120">
+              </div>
+            </div>
+            <div class="auth-field">
+              <label for="i-poids">Poids (kg)</label>
+              <div class="auth-input-wrap">
+                <input type="number" id="i-poids" placeholder="75" min="20" max="300" step="0.1">
+              </div>
+            </div>
+            <div class="auth-field">
+              <label for="i-taille">Taille (cm)</label>
+              <div class="auth-input-wrap">
+                <input type="number" id="i-taille" placeholder="175" min="100" max="250">
+              </div>
+            </div>
+          </div>
+
+          <!-- Sélection de l'objectif sportif principal -->
+          <div class="auth-field">
+            <label for="i-objectif">Objectif principal</label>
+            <div class="auth-input-wrap">
+              <svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+              <select id="i-objectif">
+                <option value="">Sélectionnez un objectif</option>
+                <option value="perte_de_poids">Perte de poids</option>
+                <option value="prise_de_masse">Prise de masse</option>
+                <option value="endurance">Endurance</option>
+                <option value="flexibilite">Flexibilité</option>
+                <option value="sante_generale">Santé générale</option>
+                <option value="performance">Performance sportive</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="auth-submit" onclick="sInscrire()">
+            <span>Créer mon compte</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+          </button>
+
+          <p id="msg" class="msg-erreur"></p>
+        </div>
+
+        <!-- Lien vers la page de connexion -->
+        <div class="auth-footer-text">
+          <p>Déjà un compte ? <a href="/login">Se connecter</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script src="../js/auth.js"></script>
+  <script>
+    /* Bascule l'affichage du champ mot de passe entre visible et masqué */
+    function togglePassword(id, btn) {
+      const input = document.getElementById(id);
+      if (!input) return;
+      const isPass = input.type === 'password';
+      input.type = isPass ? 'text' : 'password';
+      btn.querySelector('.eye-open').style.display = isPass ? 'none' : 'block';
+      btn.querySelector('.eye-closed').style.display = isPass ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>

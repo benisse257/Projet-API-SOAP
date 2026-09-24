@@ -1,0 +1,395 @@
+{
+  "info": {
+    "_postman_id": "f4a13c2b-9e6d-4f7a-b3c1-9d0f44e2a7b1",
+    "name": "Groupe 3 - Fitness x Medical (SOAP)",
+    "description": "Collection d'intégration SOAP : application Fitness (Node.js/Express/MongoDB) + legacy-medical-api (Spring Boot SOAP). WSDL : http://localhost:8080/ws/mon-service.wsdl",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. WSDL - consulter le contrat",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/ws/mon-service.wsdl",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["ws", "mon-service.wsdl"]
+        },
+        "description": "Récupère le WSDL généré par Spring WS à partir du XSD."
+      },
+      "response": []
+    },
+    {
+      "name": "2. SOAP - PAT001 (succès, 2 restrictions)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml; charset=utf-8"
+          },
+          {
+            "key": "SOAPAction",
+            "value": ""
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:med=\"http://legacymedical.com/ws\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <med:GetMedicalClearanceAndRestrictionsRequest>\n         <med:patientExternalId>PAT001</med:patientExternalId>\n      </med:GetMedicalClearanceAndRestrictionsRequest>\n   </soapenv:Body>\n</soapenv:Envelope>"
+        },
+        "url": {
+          "raw": "http://localhost:8080/ws",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["ws"]
+        },
+        "description": "Retour attendu : maxHeartRate=160, KNEE/AVOID_IMPACT, BACK/NO_HEAVY_LIFTING, EX001/EX003, clearanceExpiryDate=2027-12-31."
+      },
+      "response": [
+        {
+          "name": "Réponse SOAP PAT001 (succès)",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=utf-8"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:med=\"http://legacymedical.com/ws\"><soapenv:Body><med:GetMedicalClearanceAndRestrictionsRequest><med:patientExternalId>PAT001</med:patientExternalId></med:GetMedicalClearanceAndRestrictionsRequest></soapenv:Body></soapenv:Envelope>"
+            },
+            "url": {
+              "raw": "http://localhost:8080/ws",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["ws"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "xml",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "text/xml;charset=UTF-8"
+            }
+          ],
+          "cookie": [],
+          "body": "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n   <SOAP-ENV:Header />\n   <SOAP-ENV:Body>\n      <ns2:GetMedicalClearanceAndRestrictionsResponse xmlns:ns2=\"http://legacymedical.com/ws\">\n         <ns2:medicalProfile>\n            <ns2:maxHeartRate>160</ns2:maxHeartRate>\n            <ns2:jointRestrictions>\n               <ns2:jointRestriction>\n                  <ns2:bodyPart>KNEE</ns2:bodyPart>\n                  <ns2:restrictionType>AVOID_IMPACT</ns2:restrictionType>\n               </ns2:jointRestriction>\n               <ns2:jointRestriction>\n                  <ns2:bodyPart>BACK</ns2:bodyPart>\n                  <ns2:restrictionType>NO_HEAVY_LIFTING</ns2:restrictionType>\n               </ns2:jointRestriction>\n            </ns2:jointRestrictions>\n            <ns2:allowedExercises>\n               <ns2:exerciseId>EX001</ns2:exerciseId>\n               <ns2:exerciseId>EX003</ns2:exerciseId>\n            </ns2:allowedExercises>\n            <ns2:clearanceExpiryDate>2027-12-31</ns2:clearanceExpiryDate>\n         </ns2:medicalProfile>\n      </ns2:GetMedicalClearanceAndRestrictionsResponse>\n   </SOAP-ENV:Body>\n</SOAP-ENV:Envelope>"
+        }
+      ]
+    },
+    {
+      "name": "3. SOAP - PAT002 (succès, 1 restriction)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml; charset=utf-8"
+          },
+          {
+            "key": "SOAPAction",
+            "value": ""
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:med=\"http://legacymedical.com/ws\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <med:GetMedicalClearanceAndRestrictionsRequest>\n         <med:patientExternalId>PAT002</med:patientExternalId>\n      </med:GetMedicalClearanceAndRestrictionsRequest>\n   </soapenv:Body>\n</soapenv:Envelope>"
+        },
+        "url": {
+          "raw": "http://localhost:8080/ws",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["ws"]
+        },
+        "description": "Retour attendu : maxHeartRate=150, SHOULDER/NO_HEAVY_LIFTING, EX002/EX004/EX006, clearanceExpiryDate=2027-06-30."
+      },
+      "response": [
+        {
+          "name": "Réponse SOAP PAT002 (succès)",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=utf-8"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:med=\"http://legacymedical.com/ws\"><soapenv:Body><med:GetMedicalClearanceAndRestrictionsRequest><med:patientExternalId>PAT002</med:patientExternalId></med:GetMedicalClearanceAndRestrictionsRequest></soapenv:Body></soapenv:Envelope>"
+            },
+            "url": {
+              "raw": "http://localhost:8080/ws",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["ws"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "xml",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "text/xml;charset=UTF-8"
+            }
+          ],
+          "cookie": [],
+          "body": "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n   <SOAP-ENV:Header />\n   <SOAP-ENV:Body>\n      <ns2:GetMedicalClearanceAndRestrictionsResponse xmlns:ns2=\"http://legacymedical.com/ws\">\n         <ns2:medicalProfile>\n            <ns2:maxHeartRate>150</ns2:maxHeartRate>\n            <ns2:jointRestrictions>\n               <ns2:jointRestriction>\n                  <ns2:bodyPart>SHOULDER</ns2:bodyPart>\n                  <ns2:restrictionType>NO_HEAVY_LIFTING</ns2:restrictionType>\n               </ns2:jointRestriction>\n            </ns2:jointRestrictions>\n            <ns2:allowedExercises>\n               <ns2:exerciseId>EX002</ns2:exerciseId>\n               <ns2:exerciseId>EX004</ns2:exerciseId>\n               <ns2:exerciseId>EX006</ns2:exerciseId>\n            </ns2:allowedExercises>\n            <ns2:clearanceExpiryDate>2027-06-30</ns2:clearanceExpiryDate>\n         </ns2:medicalProfile>\n      </ns2:GetMedicalClearanceAndRestrictionsResponse>\n   </SOAP-ENV:Body>\n</SOAP-ENV:Envelope>"
+        }
+      ]
+    },
+    {
+      "name": "4. SOAP - PAT999 (SOAP Fault)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml; charset=utf-8"
+          },
+          {
+            "key": "SOAPAction",
+            "value": ""
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:med=\"http://legacymedical.com/ws\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <med:GetMedicalClearanceAndRestrictionsRequest>\n         <med:patientExternalId>PAT999</med:patientExternalId>\n      </med:GetMedicalClearanceAndRestrictionsRequest>\n   </soapenv:Body>\n</soapenv:Envelope>"
+        },
+        "url": {
+          "raw": "http://localhost:8080/ws",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["ws"]
+        },
+        "description": "Patient inexistant : Spring WS renvoie une SOAP Fault (faultcode SOAP-ENV:Client, faultstring 'Patient inexistant : PAT999')."
+      },
+      "response": [
+        {
+          "name": "Réponse SOAP PAT999 (SOAP Fault)",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=utf-8"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:med=\"http://legacymedical.com/ws\"><soapenv:Body><med:GetMedicalClearanceAndRestrictionsRequest><med:patientExternalId>PAT999</med:patientExternalId></med:GetMedicalClearanceAndRestrictionsRequest></soapenv:Body></soapenv:Envelope>"
+            },
+            "url": {
+              "raw": "http://localhost:8080/ws",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["ws"]
+            }
+          },
+          "status": "Internal Server Error",
+          "code": 500,
+          "_postman_previewlanguage": "xml",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "text/xml;charset=UTF-8"
+            }
+          ],
+          "cookie": [],
+          "body": "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n   <SOAP-ENV:Header />\n   <SOAP-ENV:Body>\n      <SOAP-ENV:Fault>\n         <faultcode>SOAP-ENV:Client</faultcode>\n         <faultstring xml:lang=\"en\">Patient inexistant : PAT999</faultstring>\n      </SOAP-ENV:Fault>\n   </SOAP-ENV:Body>\n</SOAP-ENV:Envelope>"
+        }
+      ]
+    },
+    {
+      "name": "5. Fitness app - Login (obtenir le JWT)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"med@example.com\",\n  \"motDePasse\": \"Password123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "auth", "login"]
+        },
+        "description": "Copier le champ 'token' de la réponse, puis l'utiliser dans la requête suivante (Bearer)."
+      },
+      "response": [
+        {
+          "name": "Réponse login (JWT)",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"med@example.com\",\n  \"motDePasse\": \"Password123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/auth/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"user\": {\n    \"id\": \"6ab50f2e1d5a9807ac0e7ac7\",\n    \"nom\": \"Patient test\",\n    \"email\": \"med@example.com\",\n    \"role\": \"sportif\"\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "6. Fitness app - GET /api/medical/profile (SOAP -> MongoDB)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5000/api/medical/profile",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "medical", "profile"]
+        },
+        "description": "Appelle Spring Boot via SOAP, mappe la réponse et enregistre/met à jour le MedicalProfile dans MongoDB (upsert)."
+      },
+      "response": [
+        {
+          "name": "Réponse GET /api/medical/profile (profil synchronisé)",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/medical/profile",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "medical", "profile"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"success\": true,\n  \"data\": {\n    \"_id\": \"6ab518e4b8f2927de79b1183\",\n    \"userId\": \"6ab50f2e1d5a9807ac0e7ac7\",\n    \"patientExternalId\": \"PAT001\",\n    \"maxHeartRate\": 160,\n    \"jointRestrictions\": [\n      { \"bodyPart\": \"KNEE\", \"restrictionType\": \"AVOID_IMPACT\" },\n      { \"bodyPart\": \"BACK\", \"restrictionType\": \"NO_HEAVY_LIFTING\" }\n    ],\n    \"allowedExercises\": [\"EX001\", \"EX003\"],\n    \"clearanceExpiryDate\": \"2027-12-31\",\n    \"lastSyncedAt\": \"2026-09-24T12:40:12.985Z\"\n  },\n  \"source\": \"SOAP\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "7. Fitness app - POST /api/medical/validate-program (restrictions)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"programmeId\": \"<identifiant du programme à valider>\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/medical/validate-program",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "medical", "validate-program"]
+        },
+        "description": "Vérifie chaque exercice du programme contre les restrictions médicales (remontées SOAP) : clearance, allowedExercises, AVOID_IMPACT, NO_HEAVY_LIFTING. Réponse : decision AUTORISE/BLOQUE + exercices bloqués."
+      },
+      "response": [
+        {
+          "name": "Réponse validate-program PAT001 (BLOQUE)",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"programmeId\": \"<identifiant du programme à valider>\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/medical/validate-program",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "medical", "validate-program"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"success\": true,\n  \"data\": {\n    \"programmeId\": \"66f9f1f9c8f3b3e4b2d5a901\",\n    \"programmeNom\": \"Programme validation PAT001\",\n    \"athlete\": { \"id\": \"66f9f1f9c8f3b3e4b2d5a900\", \"nom\": \"Patient test\", \"patientExternalId\": \"PAT001\" },\n    \"profil\": {\n      \"maxHeartRate\": 160,\n      \"clearanceExpiryDate\": \"2027-12-31\",\n      \"clearanceExpiree\": false,\n      \"jointRestrictions\": [\n        { \"bodyPart\": \"KNEE\", \"restrictionType\": \"AVOID_IMPACT\" },\n        { \"bodyPart\": \"BACK\", \"restrictionType\": \"NO_HEAVY_LIFTING\" }\n      ],\n      \"allowedExercises\": [\"EX001\", \"EX003\"]\n    },\n    \"decision\": \"BLOQUE\",\n    \"resume\": { \"exercices\": 6, \"autorises\": 2, \"bloques\": 4 },\n    \"blocages\": [\n      { \"exerciceId\": \"66f9f1f9c8f3b3e4b2d5a910\", \"exerciceNom\": \"Squat\", \"seanceNom\": \"Séance validation 1\", \"raisons\": [\"Articulation KNEE (AVOID_IMPACT) : exercice a impact interdit (muscles : quadriceps)\"] }\n    ]\n  }\n}"
+        }
+      ]
+    }
+  ]
+}

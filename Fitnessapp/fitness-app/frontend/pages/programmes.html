@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!-- Page programmes FitTracker — Création et gestion de programmes d'entraînement structurés -->
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>FitTracker — Programmes</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<!-- ===== BARRE DE NAVIGATION ===== -->
+<nav>
+   <div class="logo">FitTracker</div>
+
+  <div class="nav-links nav-sportif">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/exercices">Exercices</a>
+    <a href="/categories">Catégories</a>
+    <a href="/seances">Mes séances</a>
+    <a href="/programmes" class="active">Programmes</a>
+    <a href="/objectifs">Objectifs</a>
+    <a href="/historique">Historique</a>
+    <span class="nom-user" id="nomUser"></span>
+    <button class="btn-deconnexion" onclick="seDeconnecter()">Déconnexion</button>
+  </div>
+</nav>
+<!-- ===== CONTENU PRINCIPAL ===== -->
+<main>
+  <h2>Mes programmes</h2>
+  <div class="barre-actions">
+    <span></span>
+    <button class="btn-vert" onclick="ouvrirModal()">+ Nouveau programme</button>
+  </div>
+  <!-- Liste des programmes (chargée dynamiquement) -->
+  <div id="liste-programmes"></div>
+</main>
+
+<!-- ===== MODALE DE CRÉATION/ÉDITION D'UN PROGRAMME ===== -->
+<div class="modal" id="modal">
+  <div class="modal-contenu">
+    <h3 id="modalTitre">Nouveau programme</h3>
+    <input type="hidden" id="progId">
+    <label>Nom du programme *</label>
+    <input type="text" id="progNom" placeholder="Ex: Prise de masse 8 semaines">
+    <label>Description</label>
+    <textarea id="progDesc" rows="2" placeholder="Description du programme..."></textarea>
+    <label>Date de début</label>
+    <input type="date" id="progDateDebut">
+    <label>Date de fin</label>
+    <input type="date" id="progDateFin">
+    <!-- Sélection multiple de séances à inclure dans le programme -->
+    <label>Séances à inclure * (maintenez Ctrl/Cmd pour multi-sélection)</label>
+    <select id="progSeances" multiple size="6" style="width:100%;padding:0.5rem;border-radius:6px;background:var(--bg-card,#1e293b);color:var(--text,#e2e8f0);border:1px solid rgba(255,255,255,0.1)"></select>
+    <small style="color:var(--text-muted,#94a3b8);display:block;margin-top:0.25rem">Sélectionnez au moins une séance</small>
+    <div class="modal-actions">
+      <button class="btn-vert" onclick="sauvegarderProgramme()">Sauvegarder</button>
+      <button class="btn-gris" onclick="fermerModal()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCRIPTS ===== -->
+<script src="../js/commun.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/programmes.js"></script>
+</body>
+</html>

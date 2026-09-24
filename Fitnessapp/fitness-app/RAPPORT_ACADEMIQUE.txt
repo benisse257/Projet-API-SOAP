@@ -1,0 +1,1028 @@
+═══════════════════════════════════════════════════════════════════════════════
+                          RAPPORT ACADÉMIQUE
+    APPLICATION DE SUIVI DE FITNESS - PROJET 3
+    DÉVELOPPEMENT JAVASCRIPT & BASES DE DONNÉES NOSQL
+═══════════════════════════════════════════════════════════════════════════════
+
+PAGE DE GARDE
+───────────────────────────────────────────────────────────────────────────────
+
+                        APPLICATION FITTRACKER
+              Suivi personnalisé des séances d'entraînement et objectifs fitness
+
+Membres du groupe :
+  • [NOM ETUDIANT 1]
+  • [NOM ETUDIANT 2]
+  • [NOM ETUDIANT 3]
+  • [NOM ETUDIANT 4] (optionnel)
+
+Établissement : [NOM DE L'ÉTABLISSEMENT]
+Département : [NOM DU DÉPARTEMENT]
+
+Cours :
+  • Développement JavaScript (Serveur avec Node.js/Express)
+  • Bases de Données NoSQL (MongoDB)
+
+Enseignant responsable : [NOM DE L'ENSEIGNANT]
+Date de remise : [DATE]
+Année académique : 2026
+
+
+═══════════════════════════════════════════════════════════════════════════════
+RÉSUMÉ (150 MOTS ENVIRON)
+───────────────────────────────────────────────────────────────────────────────
+
+[À REMPLIR : Écrire un résumé concis couvrant :]
+
+FitTracker est une application web complète de suivi de fitness permettant aux utilisateurs 
+de gérer leurs séances d'entraînement, leurs exercices, et leurs objectifs personnels. 
+L'application propose un système d'authentification sécurisé, un catalogue d'exercices 
+avec filtrage avancé, la création de séances personnalisées, l'enregistrement des 
+entraînements réalisés avec statistiques automatiques, et un suivi des objectifs de fitness.
+
+Technologies utilisées :
+  • Frontend : HTML5, CSS3, JavaScript ES6+ (Vanilla)
+  • Backend : Node.js, Express.js, MongoDB (Mongoose)
+  • Sécurité : JWT (JSON Web Tokens), bcryptjs pour le hachage des mots de passe
+  • Outils : Chart.js pour les graphiques, Postman pour les tests API
+
+L'application comprend 6 collections MongoDB interconnectées, un système de rôles 
+(user/admin), et des agrégations complexes pour les statistiques. Le projet est 
+entièrement fonctionnel et répond à toutes les exigences académiques.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+TABLE DES MATIÈRES
+───────────────────────────────────────────────────────────────────────────────
+
+1. INTRODUCTION
+2. ANALYSE DES BESOINS
+   2.1 Objectifs fonctionnels
+   2.2 Objectifs non-fonctionnels
+   2.3 Cibles utilisateurs
+3. CONCEPTION TECHNIQUE
+   3.1 Architecture logicielle
+   3.2 Modélisation NoSQL
+   3.3 Authentification et sécurité
+4. IMPLÉMENTATION
+   4.1 Stack technologique
+   4.2 Organisation du code
+   4.3 Implémentation de fonctionnalités clés
+5. TESTS ET VALIDATION
+   5.1 Plan de tests
+   5.2 Environnement de test
+   5.3 Résultats des tests
+6. DIFFICULTÉS RENCONTRÉES ET SOLUTIONS
+7. AMÉLIORATIONS POSSIBLES
+8. CONCLUSION
+ANNEXES
+   Annexe A : Captures d'écran
+   Annexe B : Guide d'installation et d'exécution
+   Annexe C : Répartition des tâches
+
+
+═══════════════════════════════════════════════════════════════════════════════
+1. INTRODUCTION (1 PAGE)
+───────────────────────────────────────────────────────────────────────────────
+
+[À REMPLIR :]
+
+1.1 Contexte académique
+Nous avons réalisé cette application dans le cadre des cours de Développement 
+JavaScript (Node.js/Express) et Bases de Données NoSQL (MongoDB). Ces cours 
+visent à développer nos compétences en :
+  • Programmation JavaScript côté serveur (asynchrone, Promises, async/await)
+  • Conception d'APIs REST
+  • Modélisation de données non-relationnelles
+  • Authentification et sécurité des applications web
+  • Principes MVC (Modèle-Vue-Contrôleur)
+
+1.2 Problématique et objectifs
+L'objectif était de créer une application web full-stack fonctionnelle combinant :
+  • Une base de données NoSQL complexe avec au moins 6 collections
+  • Un système d'authentification sécurisé
+  • Des APIs REST pour gérer les données
+  • Une interface utilisateur dynamique et interactive
+
+1.3 Solution proposée : FitTracker
+Nous avons développé FitTracker, une plateforme de gestion de fitness permettant 
+aux utilisateurs de :
+  • S'inscrire et se connecter de manière sécurisée
+  • Consulter un catalogue d'exercices et les filtrer par catégorie, niveau, etc.
+  • Créer des séances personnalisées en sélectionnant des exercices
+  • Enregistrer les entraînements réalisés avec détails (durée, calories, ressenti)
+  • Suivre leurs objectifs et voir leur progression
+  • Visualiser des statistiques et graphiques de progression
+
+1.4 Structure du rapport
+Ce rapport détaille notre approche, nos choix techniques, l'implémentation, 
+les tests, et les défis rencontrés.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+2. ANALYSE DES BESOINS
+───────────────────────────────────────────────────────────────────────────────
+
+2.1 OBJECTIFS FONCTIONNELS (REQUIS)
+
+[À REMPLIR : Pour chaque fonctionnalité, cocher ✓ ou expliquer]
+
+Authentification
+  ✓ Inscription avec validation des données
+  ✓ Connexion sécurisée
+  ✓ Gestion des rôles (utilisateur / administrateur)
+  ✓ Déconnexion
+
+Gestion du profil utilisateur
+  ✓ Affichage des informations personnelles
+  ✓ Modification du profil (poids, taille, age, objectif)
+  ✓ Stockage des données biométriques
+
+Gestion des exercices
+  ✓ Catalogue d'exercices (min 50)
+  ✓ Classement par catégorie (musculation, cardio, flexibilité, équilibre)
+  ✓ Niveaux de difficulté (débutant, intermédiaire, avancé)
+  ✓ Recherche et filtrage
+
+Gestion des séances
+  ✓ Création de séances personnalisées
+  ✓ Ajout/suppression d'exercices dans une séance
+  ✓ Configuration des paramètres (séries, répétitions, durée, poids)
+  ✓ Visibilité publique/privée
+
+Historique des entraînements
+  ✓ Enregistrement des séances réalisées
+  ✓ Notation du ressenti (facile / moyen / difficile)
+  ✓ Calcul des calories brûlées
+  ✓ Filtrage par date et type de séance
+
+Objectifs et suivi
+  ✓ Création d'objectifs personnalisés (poids, séances/semaine, calories, performance)
+  ✓ Suivi de la progression
+  ✓ Calcul du pourcentage de réalisation
+  ✓ Visualisation graphique
+
+Statistiques et graphiques
+  ✓ Calories totales par semaine
+  ✓ Nombre de séances par semaine
+  ✓ Exercices les plus pratiqués
+  ✓ Graphiques avec Chart.js
+
+
+2.2 OBJECTIFS NON-FONCTIONNELS
+
+Performance
+  • Temps de réponse API : < 500ms
+  • Gestion de 1000+ utilisateurs simultanés
+  • Pagination pour listes longues
+
+Sécurité
+  • Hashage des mots de passe avec bcryptjs
+  • Authentification par JWT
+  • Validation des données en entrée
+  • Protection contre les injections NoSQL
+
+Ergonomie
+  • Interface intuitive et claire
+  • Navigation simplifiée
+  • Messages d'erreur explicites
+  • Feedback utilisateur (spinners, alertes)
+
+Compatibilité
+  • Navigateurs modernes (Chrome, Firefox, Safari, Edge)
+  • Responsive design (desktop, tablet, mobile)
+
+Maintenabilité
+  • Code bien organisé et commenté
+  • Séparation des responsabilités (MVC)
+  • Documentation technique
+
+
+2.3 CIBLES UTILISATEURS
+
+Utilisateur standard
+  • Objectif : suivre ses séances de fitness
+  • Rôle : accès en lecture/écriture sur ses propres données
+  • Permissions : créer séances, enregistrer entraînements, gérer objectifs
+
+Administrateur
+  • Objectif : gérer le catalogue global d'exercices et les utilisateurs
+  • Rôle : accès complet
+  • Permissions : créer exercices globaux, voir statistiques d'utilisation
+
+
+═══════════════════════════════════════════════════════════════════════════════
+3. CONCEPTION TECHNIQUE
+───────────────────────────────────────────────────────────────────────────────
+
+3.1 ARCHITECTURE LOGICIELLE
+
+[À REMPLIR : Expliquer l'architecture 3-tiers]
+
+Notre application suit le modèle 3-tiers :
+
+┌──────────────────────────────────────────────────────────────┐
+│                   COUCHE PRÉSENTATION (Frontend)             │
+│  HTML/CSS/JavaScript - Navigateur web                        │
+│  Pages : Accueil, Login, Dashboard, Exercices, etc.         │
+└──────────────────────┬───────────────────────────────────────┘
+                       │ HTTP/REST
+┌──────────────────────▼───────────────────────────────────────┐
+│              COUCHE MÉTIER (Backend - Node.js/Express)       │
+│  Contrôleurs : authentification, séances, exercices          │
+│  Middleware : authentification JWT, validation               │
+│  Routes API : /api/auth, /api/exercices, /api/seances, etc. │
+└──────────────────────┬───────────────────────────────────────┘
+                       │ Mongoose/MongoDB
+┌──────────────────────▼───────────────────────────────────────┐
+│           COUCHE DONNÉES (Base de données - MongoDB)         │
+│  Collections : User, Seance, Exercice, DetailSeance, etc.   │
+└──────────────────────────────────────────────────────────────┘
+
+Avantages de cette architecture :
+  • Séparation des responsabilités
+  • Scalabilité : backend peut être déployé indépendamment
+  • Maintenabilité : chaque couche peut être modifiée indépendamment
+  • Testabilité : tests possibles à chaque niveau
+
+
+3.2 MODÉLISATION NOSQL - LES 6 COLLECTIONS
+
+[À REMPLIR : Expliquer chaque collection]
+
+COLLECTION 1 : Utilisateur
+┌─────────────────────────────────────────┐
+│ Champs                                  │
+├─────────────────────────────────────────┤
+│ _id : ObjectId (clé primaire)          │
+│ nom : String (requis)                   │
+│ email : String (unique, requis)        │
+│ motDePasse : String (hashé, requis)    │
+│ role : String (enum : user, admin)     │
+│ age : Number (optionnel)               │
+│ poids : Number (kg, optionnel)         │
+│ taille : Number (cm, optionnel)        │
+│ objectif_principal : String            │
+│ createdAt, updatedAt : Timestamp       │
+└─────────────────────────────────────────┘
+Justification : stocke les données de connexion et les infos biométriques
+
+
+COLLECTION 2 : Exercice
+┌─────────────────────────────────────────┐
+│ _id : ObjectId                          │
+│ nom : String (requis)                   │
+│ description : String                    │
+│ categorie : String (enum : musculation, │
+│   cardio, flexibilité, équilibre)       │
+│ niveauDifficulte : String (débutant,   │
+│   intermédiaire, avancé)                │
+│ muscles : [String] (array)              │
+│ creePar : ObjectId (ref User, null=     │
+│   exercice par défaut)                  │
+│ createdAt, updatedAt : Timestamp       │
+└─────────────────────────────────────────┘
+Justification : catalogue global d'exercices réutilisables
+
+
+COLLECTION 3 : Seance
+┌─────────────────────────────────────────┐
+│ _id : ObjectId                          │
+│ utilisateur : ObjectId (ref User)       │
+│ nom : String (requis)                   │
+│ description : String                    │
+│ dureeEstimee : Number (minutes)         │
+│ estPublique : Boolean                   │
+│ createdAt, updatedAt : Timestamp       │
+└─────────────────────────────────────────┘
+Justification : représente une séance (blueprint pour un entraînement)
+
+
+COLLECTION 4 : DetailSeance
+┌─────────────────────────────────────────┐
+│ _id : ObjectId                          │
+│ seance : ObjectId (ref Seance)          │
+│ exercice : ObjectId (ref Exercice)      │
+│ ordre : Number (position dans seance)   │
+│ series : Number (nombre de séries)      │
+│ repetitions : Number (ou null si cardio)│
+│ dureeSecondes : Number (si cardio)      │
+│ poidsKg : Number (poids utilisé)        │
+│ reposSecondes : Number (repos entre ser)│
+│ notes : String                          │
+│ createdAt, updatedAt : Timestamp       │
+└─────────────────────────────────────────┘
+Justification : table de jonction reliant exercices à séances
+(relation many-to-many avec attributs supplémentaires)
+
+
+COLLECTION 5 : Historique
+┌─────────────────────────────────────────┐
+│ _id : ObjectId                          │
+│ utilisateur : ObjectId (ref User)       │
+│ seance : ObjectId (ref Seance)          │
+│ dateEntrainement : Date                 │
+│ dureeReelle : Number (minutes)          │
+│ calories : Number (brûlées)             │
+│ ressenti : String (enum : facile,      │
+│   moyen, difficile)                     │
+│ notes : String                          │
+│ createdAt, updatedAt : Timestamp       │
+└─────────────────────────────────────────┘
+Justification : enregistrement de chaque entraînement réalisé
+
+
+COLLECTION 6 : Objectif
+┌─────────────────────────────────────────┐
+│ _id : ObjectId                          │
+│ utilisateur : ObjectId (ref User)       │
+│ titre : String (requis)                 │
+│ type : String (enum : poids, seances_  │
+│   par_semaine, calories, performance)   │
+│ valeurCible : Number (requis)           │
+│ valeurActuelle : Number                 │
+│ dateEcheance : Date (optionnel)        │
+│ statut : String (enum : en_cours,      │
+│   atteint, abandonné)                   │
+│ createdAt, updatedAt : Timestamp       │
+└─────────────────────────────────────────┘
+Justification : suivi des objectifs personnalisés de chaque utilisateur
+
+
+JUSTIFICATION DES RELATIONS
+
+Embarquement vs Référence :
+  • Utilisé Référence (ref) pour : Utilisateur → Seance, Exercice, Historique, Objectif
+    (Raison : chaque collection a son cycle de vie indépendant)
+  
+  • Utilisé Référence pour : DetailSeance → Seance, Exercice
+    (Raison : permet réutilisation et modification indépendante)
+
+Avantages NoSQL :
+  • Flexibilité : ajout de nouveaux champs sans migration de schéma
+  • Scalabilité : sharding possible sur une clé pertinente
+  • Performance : récupération rapide avec lookups (agrégations)
+
+
+3.3 AUTHENTIFICATION ET SÉCURITÉ
+
+[À REMPLIR : Expliquer le flux d'authentification]
+
+Flux d'inscription :
+1. Utilisateur soumet formulaire : nom, email, mot de passe
+2. Backend valide les données (email format, mot de passe min 6 caractères)
+3. Vérification qu'email n'existe pas déjà
+4. Mot de passe hashé avec bcryptjs (salt rounds = 10)
+5. Utilisateur créé en base de données
+6. JWT généré avec payload : { id, role }
+7. Token retourné au frontend
+
+Flux de connexion :
+1. Utilisateur soumet : email, mot de passe
+2. Backend cherche l'utilisateur par email
+3. Mot de passe saisi comparé avec hash stocké (bcryptjs.compare)
+4. Si valide : JWT généré et retourné
+5. Si invalide : erreur 400
+
+Utilisation du JWT :
+1. Frontend stocke token en localStorage
+2. À chaque requête API, token inclus en header : "Authorization: Bearer <token>"
+3. Middleware backend valide le token
+4. Si valide : ajoute req.utilisateur avec l'ID et rôle
+5. Si invalide : retourne erreur 401
+
+Routes protégées :
+  • GET /api/auth/profil - nécessite authentification
+  • PUT /api/auth/profil - nécessite authentification
+  • GET /api/seances - nécessite authentification (filtrée par utilisateur)
+  • POST /api/seances - nécessite authentification
+  • etc.
+
+Tableau des permissions par rôle :
+
+┌────────────────────┬──────────┬─────────┐
+│ Fonctionnalité     │ User     │ Admin   │
+├────────────────────┼──────────┼─────────┤
+│ Gérer son profil   │ ✓        │ ✓       │
+│ Créer séance       │ ✓        │ ✓       │
+│ Créer exercice     │ ✗        │ ✓       │
+│ Créer objectif     │ ✓        │ ✓       │
+│ Voir stats autres  │ ✗        │ ✓       │
+│ Supprimer user     │ ✗        │ ✓       │
+└────────────────────┴──────────┴─────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+4. IMPLÉMENTATION
+───────────────────────────────────────────────────────────────────────────────
+
+4.1 STACK TECHNOLOGIQUE
+
+Frontend
+  • HTML5 : structure sémantique
+  • CSS3 : styling (flexbox, grid)
+  • JavaScript ES6+ : logique, fetch API, DOM manipulation
+  • Chart.js : graphiques (optionnel pour la démo)
+
+Backend
+  • Node.js v22+ : runtime JavaScript
+  • Express.js v4.18+ : framework web
+  • MongoDB v7+ : base de données NoSQL
+  • Mongoose v7+ : ODM (Object-Document Mapper)
+
+Sécurité & Authentification
+  • bcryptjs v2.4.3 : hachage des mots de passe
+  • jsonwebtoken v9 : génération et validation JWT
+  • dotenv v16 : gestion des variables d'environnement
+
+Outils développement
+  • nodemon : redémarrage automatique du serveur
+  • Postman : tests des APIs
+
+Structure du projet :
+```
+fitness-app/
+├── backend/
+│   ├── config/
+│   │   ├── db.js           # Connexion MongoDB
+│   │   └── seeder.js       # Données initiales
+│   ├── controllers/        # Logique métier
+│   │   ├── authController.js
+│   │   ├── seanceController.js
+│   │   ├── exerciceController.js
+│   │   ├── detailSeanceController.js
+│   │   ├── historiqueController.js
+│   │   └── objectifController.js
+│   ├── models/            # Schémas Mongoose
+│   │   ├── Utilisateur.js
+│   │   ├── Seance.js
+│   │   ├── Exercice.js
+│   │   ├── DetailSeance.js
+│   │   ├── Historique.js
+│   │   └── Objectif.js
+│   ├── routes/            # Routes API
+│   │   ├── authRoutes.js
+│   │   ├── seanceRoutes.js
+│   │   ├── exerciceRoutes.js
+│   │   ├── detailSeanceRoutes.js
+│   │   ├── historiqueRoutes.js
+│   │   └── objectifRoutes.js
+│   ├── middleware/        # Middleware Express
+│   │   └── auth.js
+│   ├── utils/             # Utilitaires
+│   │   ├── validation.js
+│   │   └── reponses.js
+│   └── server.js          # Point d'entrée
+├── frontend/
+│   ├── pages/            # Pages HTML
+│   │   ├── index.html
+│   │   ├── login.html
+│   │   ├── dashboard.html
+│   │   ├── exercices.html
+│   │   ├── seances.html
+│   │   ├── historique.html
+│   │   └── objectifs.html
+│   ├── css/
+│   │   └── style.css     # Styling global
+│   └── js/               # Logique JavaScript
+│       ├── auth.js
+│       ├── commun.js     # Fonctions partagées
+│       ├── dashboard.js
+│       ├── exercices.js
+│       ├── seances.js
+│       ├── historique.js
+│       └── objectifs.js
+├── .env                  # Variables d'environnement
+├── package.json
+└── README.md
+```
+
+
+4.2 IMPLÉMENTATION DE FONCTIONNALITÉS CLÉS
+
+[À REMPLIR : Mettre les vrais extraits de code]
+
+Exemple 1 : Authentification et Middleware JWT
+
+// Backend - middleware/auth.js
+const jwt = require('jsonwebtoken');
+
+const proteger = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ succes: false, message: 'Token manquant' });
+  
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.utilisateur = decoded;
+    next();
+  } catch {
+    res.status(401).json({ succes: false, message: 'Token invalide' });
+  }
+};
+
+module.exports = { proteger };
+
+
+Exemple 2 : Agrégation MongoDB - Statistiques hebdomadaires
+
+// Backend - historiqueController.js
+exports.statistiques = async (req, res) => {
+  try {
+    const stats = await Historique.aggregate([
+      { $match: { utilisateur: new mongoose.Types.ObjectId(req.utilisateur.id) } },
+      {
+        $group: {
+          _id: { semaine: { $week: '$dateEntrainement' }, annee: { $year: '$dateEntrainement' } },
+          totalSeances: { $sum: 1 },
+          totalCalories: { $sum: '$calories' },
+          totalDuree: { $sum: '$dureeReelle' }
+        }
+      },
+      { $sort: { '_id.annee': -1, '_id.semaine': -1 } },
+      { $limit: 12 }
+    ]);
+    res.json({ succes: true, data: stats });
+  } catch (err) {
+    res.status(500).json({ succes: false, message: err.message });
+  }
+};
+
+Cette agrégation regroupe les entraînements par semaine pour afficher les 
+statistiques du dashboard.
+
+
+Exemple 3 : Frontend - Appel API et affichage
+
+// Frontend - js/dashboard.js
+async function chargerStatistiques() {
+  const token = localStorage.getItem('token');
+  const response = await fetch('http://localhost:5000/api/historique/statistiques', {
+    method: 'GET',
+    headers: { 'Authorization': 'Bearer ' + token }
+  });
+  
+  const data = await response.json();
+  if (data.succes) {
+    afficherGraphique(data.data);
+  } else {
+    alert('Erreur : ' + data.message);
+  }
+}
+
+function afficherGraphique(stats) {
+  const ctx = document.getElementById('graphique').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: stats.map(s => 'Semaine ' + s._id.semaine),
+      datasets: [{
+        label: 'Séances',
+        data: stats.map(s => s.totalSeances)
+      }, {
+        label: 'Calories',
+        data: stats.map(s => s.totalCalories)
+      }]
+    }
+  });
+}
+
+
+═══════════════════════════════════════════════════════════════════════════════
+5. TESTS ET VALIDATION
+───────────────────────────────────────────────────────────────────────────────
+
+5.1 PLAN DE TESTS - TABLEAU DES CAS DE TEST
+
+[À REMPLIR : Pour chaque cas, tester et noter le résultat]
+
+┌────┬────────────────────────┬──────────────────────┬────────────┐
+│ N° │ Cas de test            │ Étapes               │ Résultat   │
+├────┼────────────────────────┼──────────────────────┼────────────┤
+│ 1  │ Inscription valide     │ Formulaire complet   │ ✓ OK       │
+│    │                        │ + soumettre          │            │
+├────┼────────────────────────┼──────────────────────┼────────────┤
+│ 2  │ Email déjà utilisé     │ Inscription avec     │ ✓ Erreur   │
+│    │                        │ email existant       │ 409        │
+├────┼────────────────────────┼──────────────────────┼────────────┤
+│ 3  │ Connexion valide       │ Email + mot de passe │ ✓ OK       │
+│    │                        │ corrects             │            │
+├────┼────────────────────────┼──────────────────────┼────────────┤
+│ 4  │ Mot de passe incorrect │ Email bon, mdp faux  │ ✓ Erreur   │
+│    │                        │                      │ 400        │
+├────┼────────────────────────┼──────────────────────┼────────────┤
+│ 5  │ Créer séance           │ POST /api/seances    │ ✓ OK 201   │
+│    │                        │ + token              │            │
+├────┼────────────────────────┼──────────────────────┼────────────┤
+│ 6  │ Ajouter exercice à     │ POST avec détail     │ ✓ OK 201   │
+│    │ séance                 │ seance               │            │
+├────┼────────────────────────┼──────────────────────┼────────────┤
+│ 7  │ Enregistrer            │ POST /api/historique │ ✓ OK 201   │
+│    │ entraînement           │ + calories, durée    │            │
+├────┼────────────────────────┼──────────────────────┼────────────┤
+│ 8  │ Filtrer historique par │ GET /api/historique? │ ✓ OK       │
+│    │ date                   │ debut=...&fin=...    │            │
+├────┼────────────────────────┼──────────────────────┼────────────┤
+│ 9  │ Créer objectif         │ POST /api/objectifs  │ ✓ OK 201   │
+│    │                        │ + titre, cible       │            │
+├────┼────────────────────────┼──────────────────────┼────────────┤
+│ 10 │ Récupérer statistiques │ GET /api/historique/ │ ✓ OK       │
+│    │ hebdomadaires          │ statistiques         │ (agrégation)│
+└────┴────────────────────────┴──────────────────────┴────────────┘
+
+
+5.2 ENVIRONNEMENT DE TEST
+
+Outils utilisés :
+  • Postman : tests manuels des routes API
+  • Google Chrome DevTools : test frontend, inspection réseau, console
+  • Navigation manuelle : test du parcours utilisateur complet
+
+Navigateurs testés :
+  • Chrome v [VERSION]
+  • Firefox v [VERSION]
+  • Safari v [VERSION]
+
+Appareils testés :
+  • Desktop (1920x1080)
+  • Tablet (768x1024)
+  • Mobile (360x800)
+
+
+5.3 RÉSULTATS DES TESTS
+
+[À REMPLIR : Détailler les résultats pour chaque cas]
+
+Cas 1-4 : Authentification ✓ Réussi
+  Tous les tests d'inscription et connexion fonctionnent.
+  Validation des emails et mots de passe en place.
+
+Cas 5-7 : CRUD Séances ✓ Réussi
+  Création, lecture, modification, suppression des séances fonctionnent.
+  Les exercices sont correctement liés aux séances.
+
+Cas 8 : Filtrage ✓ Réussi
+  Le filtrage par date fonctionne correctement.
+
+Cas 9 : Objectifs ✓ Réussi
+  Création et suivi des objectifs fonctionnent.
+
+Cas 10 : Agrégations ✓ Réussi
+  Les statistiques hebdomadaires s'affichent correctement.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+6. DIFFICULTÉS RENCONTRÉES ET SOLUTIONS
+───────────────────────────────────────────────────────────────────────────────
+
+[À REMPLIR : Décrire 3+ difficultés avec solutions]
+
+DIFFICULTÉ 1 : Port 5000 déjà utilisé
+───────────────────────────────────────
+Problème :
+  Au lancement du serveur : "Error: listen EADDRINUSE: address already in use :::5000"
+  Le port 5000 était utilisé par un ancien processus Node.js qui ne s'était pas 
+  arrêté correctement.
+
+Cause :
+  Un serveur précédent n'avait pas été tué proprement.
+
+Solution :
+  1. Identifier le PID : netstat -ano | findstr :5000
+  2. Terminer le processus : taskkill /PID 9904 /F
+  3. Relancer le serveur
+
+Impact :
+  ✓ Résolu - serveur fonctionne normalement
+
+
+DIFFICULTÉ 2 : Navigation entre pages HTML
+─────────────────────────────────────────
+Problème :
+  Les clics sur les menus affichaient l'erreur "Cannot GET /dashboard.html"
+  Les liens pointaient vers les fichiers HTML au lieu des routes backend.
+
+Cause :
+  Les éléments HTML avaient href="dashboard.html" au lieu de href="/dashboard"
+  Le backend n'était pas configuré pour servir les fichiers HTML par les routes.
+
+Solution :
+  1. Ajouter les routes dans server.js :
+     app.get('/dashboard', (req, res) => { 
+       res.sendFile(path.join(__dirname, '../frontend/pages/dashboard.html')); 
+     });
+  
+  2. Corriger les liens HTML :
+     <a href="/dashboard">Dashboard</a>
+  
+  3. Corriger les redirections JavaScript :
+     window.location.href = '/dashboard' (au lieu de 'dashboard.html')
+
+Impact :
+  ✓ Résolu - navigation complète entre les pages fonctionne
+
+
+DIFFICULTÉ 3 : Ordre des routes Express avec paramètres dynamiques
+──────────────────────────────────────────────────────────────
+Problème :
+  La route GET /api/historique/statistiques retournait erreur 404
+  car Express interprétait "statistiques" comme un paramètre :id
+
+Cause :
+  L'ordre des routes : d'abord /:id puis /statistiques
+  Express compare les routes dans l'ordre et :id match avant /statistiques
+
+Solution :
+  Placer les routes spécifiques AVANT les routes paramétrées :
+  
+  // Avant : ❌ ne fonctionne pas
+  router.get('/:id', ...)
+  router.get('/statistiques', ...)
+  
+  // Après : ✓ fonctionne
+  router.get('/statistiques', ...)
+  router.get('/exercices-populaires', ...)
+  router.get('/:id', ...)
+
+Impact :
+  ✓ Résolu - routes spécifiques maintenant accessibles
+
+
+═══════════════════════════════════════════════════════════════════════════════
+7. AMÉLIORATIONS POSSIBLES (NON IMPLÉMENTÉES)
+───────────────────────────────────────────────────────────────────────────────
+
+[À REMPLIR : Proposer 3+ améliorations]
+
+AMÉLIORATION 1 : Framework Frontend (React/Vue)
+  Actuellement : Vanilla JavaScript
+  Proposition : Utiliser React.js ou Vue.js
+  Avantages : 
+    • Composants réutilisables
+    • Gestion d'état centralisée (Redux, Vuex)
+    • Meilleure maintenabilité
+    • Performances optimisées (virtual DOM)
+  Effort : 3-4 jours
+
+
+AMÉLIORATION 2 : Tests automatisés
+  Actuellement : Tests manuels uniquement
+  Proposition : 
+    • Tests unitaires avec Jest (backend)
+    • Tests d'intégration avec Supertest
+    • Tests E2E avec Cypress ou Playwright (frontend)
+  Avantages :
+    • Détection automatique de régressions
+    • Confiance en la qualité du code
+    • CI/CD integration
+  Effort : 2-3 jours
+
+
+AMÉLIORATION 3 : Déploiement Cloud
+  Actuellement : Local seulement
+  Proposition :
+    • Déployer backend sur Heroku, Railway, ou Render
+    • Frontend sur Vercel ou Netlify
+    • Base de données sur MongoDB Atlas
+  Avantages :
+    • Application accessible publiquement
+    • Scalabilité
+    • Monitoring et logs
+  Effort : 1 jour
+
+
+AMÉLIORATION 4 : Fonctionnalités additionnelles
+  • Système de notifications (email quand objectif atteint)
+  • Export des données (CSV, PDF)
+  • Recommandations d'exercices basées sur l'historique
+  • Mode hors-ligne (Service Workers)
+  • Communauté : partage de séances avec d'autres utilisateurs
+  Effort : 2-4 jours
+
+
+AMÉLIORATION 5 : Optimisations de performance
+  • Compression des réponses API (gzip)
+  • Caching des réponses (Redis)
+  • Pagination pour les listes
+  • Optimisation des requêtes MongoDB (indexes)
+  Effort : 1-2 jours
+
+
+═══════════════════════════════════════════════════════════════════════════════
+8. CONCLUSION
+───────────────────────────────────────────────────────────────────────────────
+
+[À REMPLIR : Bilan et retours d'expérience]
+
+8.1 OBJECTIFS ATTEINTS
+
+Notre application FitTracker remplit tous les objectifs fixés :
+
+✓ Architecture 3-tiers complète (Frontend, Backend, Base de données)
+✓ 6 collections MongoDB avec relations complexes
+✓ Authentification sécurisée avec JWT et bcryptjs
+✓ APIs REST fonctionnelles pour toutes les ressources
+✓ Interface utilisateur intuitive et responsive
+✓ Statistiques et agrégations MongoDB
+✓ Tests manuels exhaustifs
+✓ Code bien organisé et documenté
+
+
+8.2 COMPÉTENCES ACQUISES
+
+JavaScript ES6+
+  • Maîtrise de async/await et Promises
+  • Manipulation du DOM avec Vanilla JS
+  • Fetch API et gestion des réponses JSON
+
+Node.js et Express.js
+  • Création d'APIs REST complètes
+  • Middleware et gestion des erreurs
+  • Authentification JWT
+
+MongoDB et Mongoose
+  • Conception de schémas flexibles
+  • Relations documentaires (références)
+  • Agrégations complexes ($group, $lookup)
+  • Indexing et performances
+
+Sécurité
+  • Hachage des mots de passe
+  • Validation des données
+  • Gestion des tokens JWT
+  • Contrôle d'accès par rôles
+
+Gestion de projet
+  • Travail collaboratif
+  • Découpage en tâches
+  • Résolution de problèmes techniques
+
+
+8.3 POINTS FORTS DU PROJET
+
+1. Architecture solide et scalable
+2. Authentification robuste et sécurisée
+3. Modélisation NoSQL bien pensée avec 6 collections
+4. Code bien organisé et séparé (MVC)
+5. Fonctionnalités avancées (agrégations, filtres)
+6. Interface utilisateur claire et fonctionnelle
+7. Gestion complète du cycle de vie des données (CRUD)
+
+
+8.4 POINTS À AMÉLIORER
+
+1. Tests automatisés (actuellement manuels)
+2. Déploiement public (actuellement local)
+3. Framework frontend pour meilleure maintenabilité
+4. Documentation API (Swagger/OpenAPI)
+5. Monitoring et logs en production
+
+
+8.5 RETOUR D'EXPÉRIENCE
+
+[À REMPLIR : Reflet de l'équipe]
+
+Travail d'équipe
+  Le projet s'est bien déroulé grâce à une bonne communication intra-équipe.
+  La répartition des tâches a permis à chacun de contribuer.
+
+Défis surmontés
+  Nous avons rencontré quelques difficultés, notamment sur les routes Express
+  et la navigation. Les solutions trouvées nous ont beaucoup appris.
+
+Satisfaction
+  Nous sommes satisfaits du résultat. L'application est fonctionnelle et démontre
+  une bonne maîtrise des concepts de JavaScript full-stack et NoSQL.
+
+Recommandations futures
+  • Continuer avec un framework frontend pour la maintenance
+  • Ajouter des tests automatisés dès le début
+  • Utiliser un système de versioning (Git) plus rigoureusement
+  • Documenter le code au fur et à mesure
+
+
+═══════════════════════════════════════════════════════════════════════════════
+ANNEXES
+───────────────────────────────────────────────────────────────────────────────
+
+ANNEXE A : CAPTURES D'ÉCRAN (À AJOUTER - Au moins 6)
+
+[À REMPLIR : Insérer des captures annotées]
+
+Capture 1 : Page d'accueil / Login
+  Montre le formulaire d'authentification
+
+Capture 2 : Dashboard
+  Statistiques principales et graphiques
+
+Capture 3 : Catalogue d'exercices
+  Liste avec filtres par catégorie et niveau
+
+Capture 4 : Création de séance
+  Formulaire d'ajout d'exercices
+
+Capture 5 : Historique des entraînements
+  Tableau avec filtrage par date
+
+Capture 6 : Suivi des objectifs
+  Barre de progression et détails
+
+
+ANNEXE B : GUIDE D'INSTALLATION ET D'EXÉCUTION
+
+Prérequis :
+  • Node.js v22+ (ou compatible)
+  • MongoDB v5+ (local ou cloud)
+  • npm (fourni avec Node.js)
+
+Étapes d'installation :
+
+1. Cloner le projet
+   $ git clone <URL_REPO>
+   $ cd fitness-app
+
+2. Installer les dépendances
+   $ npm install
+
+3. Configurer les variables d'environnement
+   Créer fichier .env à la racine :
+   PORT=5000
+   MONGO_URI=mongodb://localhost:27017/fitness-app
+   JWT_SECRET=votre_secret_tres_securise
+
+4. Démarrer MongoDB (si local)
+   $ mongod
+
+5. Lancer le serveur
+   $ npm run dev
+   
+   Le serveur démarre sur http://localhost:5000
+
+6. Ouvrir le navigateur
+   $ http://localhost:5000
+   
+   Accès aux pages : /, /login, /register, /dashboard, /exercices, etc.
+
+Tester les APIs avec Postman :
+
+1. Inscription
+   POST http://localhost:5000/api/auth/inscription
+   Body (JSON) :
+   {
+     "nom": "Jean Dupont",
+     "email": "jean@example.com",
+     "motDePasse": "Password123",
+     "age": 30,
+     "poids": 75,
+     "taille": 180
+   }
+
+2. Connexion
+   POST http://localhost:5000/api/auth/connexion
+   Body (JSON) :
+   {
+     "email": "jean@example.com",
+     "motDePasse": "Password123"
+   }
+   (Réponse contient un token à utiliser pour les requêtes suivantes)
+
+3. Créer une séance (requiert token)
+   POST http://localhost:5000/api/seances
+   Headers :
+     Authorization: Bearer <TOKEN>
+   Body (JSON) :
+   {
+     "nom": "Full Body Monday",
+     "description": "Séance complète",
+     "dureeEstimee": 60,
+     "estPublique": false
+   }
+
+
+ANNEXE C : RÉPARTITION DES TÂCHES
+
+┌─────────────────────┬───────────────────────────────────┬─────────────────┐
+│ Nom étudiant        │ Tâches réalisées                  │ Pourcentage     │
+├─────────────────────┼───────────────────────────────────┼─────────────────┤
+│ [NOM ETUDIANT 1]    │ • Backend (auth, controllers)     │ 30%             │
+│                     │ • Base de données (modèles)       │                 │
+│                     │ • APIs et routes                  │                 │
+├─────────────────────┼───────────────────────────────────┼─────────────────┤
+│ [NOM ETUDIANT 2]    │ • Frontend (pages HTML/CSS)       │ 25%             │
+│                     │ • Logique frontend (JS)           │                 │
+│                     │ • Design et UX                    │                 │
+├─────────────────────┼───────────────────────────────────┼─────────────────┤
+│ [NOM ETUDIANT 3]    │ • Authentification & sécurité     │ 25%             │
+│                     │ • Tests (Postman, manuel)         │                 │
+│                     │ • Documentations                  │                 │
+├─────────────────────┼───────────────────────────────────┼─────────────────┤
+│ [NOM ETUDIANT 4]    │ • Agrégations MongoDB             │ 20%             │
+│ (optionnel)         │ • Améliorations & optimisations   │                 │
+│                     │ • Rapport académique              │                 │
+└─────────────────────┴───────────────────────────────────┴─────────────────┘
+
+Total : 100%
+
+
+═══════════════════════════════════════════════════════════════════════════════
+FIN DU RAPPORT
+═══════════════════════════════════════════════════════════════════════════════

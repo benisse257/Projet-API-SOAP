@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://legacymedical.com/ws"
+           targetNamespace="http://legacymedical.com/ws"
+           elementFormDefault="qualified">
+
+    <!-- ===== Requête ===== -->
+    <xs:element name="GetMedicalClearanceAndRestrictionsRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="patientExternalId" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- ===== Réponse ===== -->
+    <xs:element name="GetMedicalClearanceAndRestrictionsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="medicalProfile" type="tns:MedicalProfile"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Profil médical complet -->
+    <xs:complexType name="MedicalProfile">
+        <xs:sequence>
+            <xs:element name="maxHeartRate" type="xs:int"/>
+            <xs:element name="jointRestrictions" type="tns:JointRestrictions"/>
+            <xs:element name="allowedExercises" type="tns:AllowedExercises"/>
+            <xs:element name="clearanceExpiryDate" type="xs:date"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Liste des restrictions articulaires -->
+    <xs:complexType name="JointRestrictions">
+        <xs:sequence>
+            <xs:element name="jointRestriction" type="tns:JointRestriction"
+                        minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Une restriction : partie du corps + type -->
+    <xs:complexType name="JointRestriction">
+        <xs:sequence>
+            <xs:element name="bodyPart" type="xs:string"/>
+            <xs:element name="restrictionType" type="tns:RestrictionType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Types de restrictions (valeurs exactes du sujet) -->
+    <xs:simpleType name="RestrictionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AVOID_IMPACT"/>
+            <xs:enumeration value="NO_HEAVY_LIFTING"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Liste des exercices autorisés (décision B : table allowed_exercise) -->
+    <xs:complexType name="AllowedExercises">
+        <xs:sequence>
+            <xs:element name="exerciseId" type="xs:string"
+                        minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

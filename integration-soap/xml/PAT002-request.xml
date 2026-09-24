@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:med="http://legacymedical.com/ws">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <med:GetMedicalClearanceAndRestrictionsRequest>
+         <med:patientExternalId>PAT002</med:patientExternalId>
+      </med:GetMedicalClearanceAndRestrictionsRequest>
+   </soapenv:Body>
+</soapenv:Envelope>

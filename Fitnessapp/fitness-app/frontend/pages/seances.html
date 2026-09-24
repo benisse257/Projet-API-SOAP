@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<!-- Page séances FitTracker — Création et gestion des séances d'entraînement personnalisées -->
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>FitTracker — Séances</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<!-- ===== BARRE DE NAVIGATION ===== -->
+<nav>
+   <div class="logo">FitTracker</div>
+
+  <div class="nav-links nav-sportif">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/exercices">Exercices</a>
+    <a href="/categories">Catégories</a>
+    <a href="/seances" class="active">Mes séances</a>
+    <a href="/programmes">Programmes</a>
+    <a href="/objectifs">Objectifs</a>
+    <a href="/historique">Historique</a>
+    <span class="nom-user" id="nomUser"></span>
+    <button class="btn-deconnexion" onclick="seDeconnecter()">Déconnexion</button>
+  </div>
+</nav>
+<!-- ===== CONTENU PRINCIPAL ===== -->
+<main>
+  <h2>Mes séances</h2>
+  <div class="barre-actions">
+    <span></span>
+    <button class="btn-vert" onclick="ouvrirModalSeance()">+ Nouvelle séance</button>
+  </div>
+  <!-- Tableau des séances de l'utilisateur -->
+  <div class="tableau-container">
+    <table>
+      <thead><tr><th>Nom</th><th>Description</th><th>Durée estimée</th><th>Statut</th><th>Actions</th></tr></thead>
+      <tbody id="tbodySeances"></tbody>
+    </table>
+  </div>
+</main>
+
+<!-- ===== MODALE DE CRÉATION/ÉDITION D'UNE SÉANCE ===== -->
+<div class="modal" id="modalSeance">
+  <div class="modal-contenu">
+    <h3 id="titreModalSeance">Nouvelle séance</h3>
+    <input type="hidden" id="seanceId">
+    <label>Nom de la séance</label>
+    <input type="text" id="seanceNom" placeholder="Ex: Full Body Lundi">
+    <label>Description</label>
+    <textarea id="seanceDesc" rows="2" placeholder="Description..."></textarea>
+    <label>Durée estimée (minutes)</label>
+    <input type="number" id="seanceDuree" placeholder="45">
+    <label class="checkbox-label">
+      <input type="checkbox" id="seancePublique"> Séance publique
+    </label>
+    <div class="modal-actions">
+      <button class="btn-vert" onclick="sauvegarderSeance()">Sauvegarder</button>
+      <button class="btn-gris" onclick="fermerModalSeance()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PANNEAU LATÉRAL — DÉTAILS DES EXERCICES D'UNE SÉANCE ===== -->
+<div class="panneau-details" id="panneauDetails">
+  <div class="panneau-header">
+    <h3 id="titreDetails">Exercices</h3>
+    <button class="btn-gris" onclick="fermerDetails()">Fermer</button>
+  </div>
+  <div id="zoneDetails">
+    <div id="listeDetails"></div>
+  </div>
+  <!-- Formulaire d'ajout d'exercice à la séance -->
+  <div id="zoneAjouter" hidden>
+    <hr class="panneau-divider">
+    <h4>Ajouter un exercice</h4>
+    <label>Exercice</label>
+    <select id="selectExercice"></select>
+    <!-- Paramètres de l'exercice (séries, reps, durée, poids, repos) -->
+    <div class="panneau-grid">
+      <div><label>Séries</label><input type="number" id="nbSeries" value="3" min="1"></div>
+      <div><label>Reps</label><input type="number" id="nbReps" placeholder="12"></div>
+      <div><label>Durée (s)</label><input type="number" id="dureeSec" placeholder="60"></div>
+      <div><label>Poids (kg)</label><input type="number" id="poids" placeholder="0"></div>
+      <div><label>Repos (s)</label><input type="number" id="repos" value="60"></div>
+    </div>
+    <label>Notes</label>
+    <textarea id="notesDetail" rows="2" placeholder="Instructions..."></textarea>
+    <button class="btn-vert" style="width:100%;margin-top:0.5rem" onclick="ajouterDetail()">Ajouter à la séance</button>
+  </div>
+</div>
+<!-- ===== SCRIPTS ===== -->
+<script src="../js/commun.js"></script>
+<script src="../js/seances.js"></script>
+</body>
+</html>

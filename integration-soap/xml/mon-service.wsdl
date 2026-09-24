@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch="http://legacymedical.com/ws" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://legacymedical.com/ws" targetNamespace="http://legacymedical.com/ws">
+  <wsdl:types>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://legacymedical.com/ws">
+
+    <!-- ===== Requête ===== -->
+    <xs:element name="GetMedicalClearanceAndRestrictionsRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="patientExternalId" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- ===== Réponse ===== -->
+    <xs:element name="GetMedicalClearanceAndRestrictionsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="medicalProfile" type="tns:MedicalProfile"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Profil médical complet -->
+    <xs:complexType name="MedicalProfile">
+        <xs:sequence>
+            <xs:element name="maxHeartRate" type="xs:int"/>
+            <xs:element name="jointRestrictions" type="tns:JointRestrictions"/>
+            <xs:element name="allowedExercises" type="tns:AllowedExercises"/>
+            <xs:element name="clearanceExpiryDate" type="xs:date"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Liste des restrictions articulaires -->
+    <xs:complexType name="JointRestrictions">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="jointRestriction" type="tns:JointRestriction"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Une restriction : partie du corps + type -->
+    <xs:complexType name="JointRestriction">
+        <xs:sequence>
+            <xs:element name="bodyPart" type="xs:string"/>
+            <xs:element name="restrictionType" type="tns:RestrictionType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Types de restrictions (valeurs exactes du sujet) -->
+    <xs:simpleType name="RestrictionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AVOID_IMPACT"/>
+            <xs:enumeration value="NO_HEAVY_LIFTING"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Liste des exercices autorisés (décision B : table allowed_exercise) -->
+    <xs:complexType name="AllowedExercises">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="exerciseId" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="GetMedicalClearanceAndRestrictionsResponse">
+    <wsdl:part element="tns:GetMedicalClearanceAndRestrictionsResponse" name="GetMedicalClearanceAndRestrictionsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetMedicalClearanceAndRestrictionsRequest">
+    <wsdl:part element="tns:GetMedicalClearanceAndRestrictionsRequest" name="GetMedicalClearanceAndRestrictionsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="MedicalClearancePort">
+    <wsdl:operation name="GetMedicalClearanceAndRestrictions">
+      <wsdl:input message="tns:GetMedicalClearanceAndRestrictionsRequest" name="GetMedicalClearanceAndRestrictionsRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:GetMedicalClearanceAndRestrictionsResponse" name="GetMedicalClearanceAndRestrictionsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="MedicalClearancePortSoap11" type="tns:MedicalClearancePort">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="GetMedicalClearanceAndRestrictions">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="GetMedicalClearanceAndRestrictionsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="GetMedicalClearanceAndRestrictionsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="MedicalClearancePortService">
+    <wsdl:port binding="tns:MedicalClearancePortSoap11" name="MedicalClearancePortSoap11">
+      <soap:address location="http://localhost:8080/ws"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

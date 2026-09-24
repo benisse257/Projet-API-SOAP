@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<!-- Page exercices FitTracker — Catalogue d'exercices avec filtres et gestion CRUD -->
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>FitTracker — Exercices</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<!-- ===== BARRE DE NAVIGATION ===== -->
+<nav>
+    <div class="logo">FitTracker</div>
+ 
+  <div class="nav-links nav-sportif">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/exercices" class="active">Exercices</a>
+    <a href="/categories">Catégories</a>
+    <a href="/seances">Mes séances</a>
+    <a href="/programmes">Programmes</a>
+    <a href="/objectifs">Objectifs</a>
+    <a href="/historique">Historique</a>
+    <span class="nom-user" id="nomUser"></span>
+    <button class="btn-deconnexion" onclick="seDeconnecter()">Déconnexion</button>
+  </div>
+</nav>
+<!-- ===== CONTENU PRINCIPAL ===== -->
+<main>
+  <h2>Catalogue d'exercices</h2>
+
+  <!-- ===== BARRE D'ACTIONS ET FILTRES ===== -->
+  <div class="barre-actions">
+    <div class="filtres">
+      <input type="text"  id="recherche"  placeholder="Rechercher..." oninput="chargerExercices()">
+      <select id="filtreCat" onchange="chargerExercices()">
+        <option value="">Toutes catégories</option>
+        <option value="musculation">Musculation</option>
+        <option value="cardio">Cardio</option>
+        <option value="flexibilite">Flexibilité</option>
+        <option value="equilibre">Équilibre</option>
+      </select>
+      <select id="filtreNiv" onchange="chargerExercices()">
+        <option value="">Tous niveaux</option>
+        <option value="debutant">Débutant</option>
+        <option value="intermediaire">Intermédiaire</option>
+        <option value="avance">Avancé</option>
+      </select>
+    </div>
+    <button id="btnAjouterExercice" class="btn-vert" onclick="ouvrirModal()">+ Ajouter un exercice</button>
+  </div>
+
+  <!-- Tableau du catalogue d'exercices -->
+  <div class="tableau-container">
+    <table>
+      <thead>
+        <tr><th>Nom</th><th>Catégorie</th><th>Niveau</th><th>Muscles</th><th>Actions</th></tr>
+      </thead>
+      <tbody id="tbodyExercices"></tbody>
+    </table>
+  </div>
+</main>
+
+<!-- ===== MODALE D'AJOUT/ÉDITION D'UN EXERCICE ===== -->
+<div class="modal" id="modal">
+  <div class="modal-contenu">
+    <h3 id="modalTitre">Ajouter un exercice</h3>
+    <input type="hidden" id="exoId">
+    <label>Nom</label>
+    <input type="text" id="exoNom" placeholder="Nom de l'exercice">
+    <label>Description</label>
+    <textarea id="exoDesc" rows="2" placeholder="Description..."></textarea>
+    <label>Catégorie</label>
+    <select id="exoCat">
+      <option value="musculation">Musculation</option>
+      <option value="cardio">Cardio</option>
+      <option value="flexibilite">Flexibilité</option>
+      <option value="equilibre">Équilibre</option>
+    </select>
+    <label>Niveau</label>
+    <select id="exoNiv">
+      <option value="debutant">Débutant</option>
+      <option value="intermediaire">Intermédiaire</option>
+      <option value="avance">Avancé</option>
+    </select>
+    <label>Muscles ciblés (séparés par virgule)</label>
+    <input type="text" id="exoMuscles" placeholder="ex: biceps, triceps">
+    <div class="modal-actions">
+      <button class="btn-vert" onclick="sauvegarderExercice()">Sauvegarder</button>
+      <button class="btn-gris" onclick="fermerModal()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCRIPTS ===== -->
+<script src="../js/commun.js"></script>
+<script src="../js/exercices.js"></script>
+</body>
+</html>

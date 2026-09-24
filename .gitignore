@@ -1,0 +1,26 @@
+# --- Node.js ---
+node_modules/
+npm-debug.log*
+yarn-error.log*
+package-lock.json.tmp
+
+# --- Variables d'environnement (jamais commitées) ---
+.env
+.env.*
+!.env.example
+
+# --- Java / Maven / Spring Boot ---
+target/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+.idea/
+*.iml
+.vscode/
+.fleet/
+
+# --- Fichiers systèmes / logs ---
+.DS_Store
+Thumbs.db
+*.log
+*.tmp

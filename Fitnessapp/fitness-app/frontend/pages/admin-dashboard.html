@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!-- Tableau de bord administrateur FitTracker — Vue d'ensemble globale de la plateforme -->
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>FitTracker — Admin Dashboard</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<!-- ===== BARRE DE NAVIGATION ADMINISTRATEUR ===== -->
+<nav>
+  <div class="logo">FitTracker</div>
+  <div class="nav-links nav-admin">
+    <a href="/admin-dashboard" class="active">Tableau de bord</a>
+    <a href="/exercices">Catalogue</a>
+    <a href="/categories">Catégories</a>
+    <a href="/users">Utilisateurs</a>
+    <span class="nom-user" id="nomUserAdmin"></span>
+    <button class="btn-deconnexion" onclick="seDeconnecter()">Déconnexion</button>
+  </div>
+</nav>
+<!-- ===== CONTENU PRINCIPAL ===== -->
+<main>
+  <h2>Tableau de bord administrateur</h2>
+
+  <!-- Résumé rapide des statistiques globales -->
+  <div id="resume-stats" class="stats-resume"></div>
+
+  <!-- ===== CARTES DE STATISTIQUES GLOBALES ===== -->
+  <div class="stats-grid" style="margin-bottom:2rem">
+    <div class="stat-carte stat-blue">
+      <div class="stat-icon">👥</div>
+      <h3 id="statTotalUsers">0</h3>
+      <p>Utilisateurs</p>
+    </div>
+    <div class="stat-carte stat-orange">
+      <div class="stat-icon">🏋️</div>
+      <h3 id="statTotalSeances">0</h3>
+      <p>Séances</p>
+    </div>
+    <div class="stat-carte stat-purple">
+      <div class="stat-icon">💪</div>
+      <h3 id="statTotalExercices">0</h3>
+      <p>Exercices</p>
+    </div>
+    <div class="stat-carte stat-green">
+      <div class="stat-icon">📁</div>
+      <h3 id="statTotalCategories">0</h3>
+      <p>Catégories</p>
+    </div>
+    <div class="stat-carte stat-cyan">
+      <div class="stat-icon">📋</div>
+      <h3 id="statTotalProgrammes">0</h3>
+      <p>Programmes</p>
+    </div>
+    <div class="stat-carte stat-pink">
+      <div class="stat-icon">🎯</div>
+      <h3 id="statTotalObjectifs">0</h3>
+      <p>Objectifs</p>
+    </div>
+  </div>
+
+  <!-- ===== DERNIERS UTILISATEURS INSCRITS ET GRAPHIQUE ===== -->
+  <div class="stats-row-2">
+    <div class="stats-col">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0">Utilisateurs inscrits</h3>
+        <a href="/users" class="btn-secondary" style="font-size:0.82rem;padding:0.4rem 0.9rem">Voir tous</a>
+      </div>
+      <!-- Tableau récapitulatif des derniers utilisateurs -->
+      <div class="tableau-container" style="margin-top:0.85rem">
+        <table>
+          <thead><tr><th>#</th><th>Nom</th><th>Email</th><th>Rôle</th><th>Statut</th></tr></thead>
+          <tbody id="derniersUsers"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="graphique-container" style="margin-bottom:0">
+      <canvas id="section-chart-top" height="280"></canvas>
+    </div>
+  </div>
+
+  <!-- ===== OBJECTIFS EN COURS ET DERNIERS ENTRAÎNEMENTS ===== -->
+  <div class="stats-row-2">
+    <div id="section-objectifs" class="stats-col">
+      <h3>Objectifs en cours</h3>
+      <div id="objectifsContainer"></div>
+    </div>
+    <div id="section-entrainements" class="stats-col">
+      <h3>Derniers entraînements</h3>
+      <div class="tableau-container">
+        <table>
+          <thead><tr><th>Date</th><th>Séance</th><th>Durée</th><th>Calories</th></tr></thead>
+          <tbody id="dernierEntrainement"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+<!-- ===== SCRIPTS ===== -->
+<script src="../js/commun.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/admin-dashboard.js"></script>
+</body>
+</html>

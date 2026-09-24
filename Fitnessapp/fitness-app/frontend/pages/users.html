@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<!-- Page gestion des utilisateurs FitTracker — Administration des comptes utilisateurs (CRUD) -->
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>FitTracker — Gestion des utilisateurs</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<!-- ===== BARRE DE NAVIGATION ===== -->
+<nav>
+  
+  <div class="nav-links nav-sportif">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/exercices">Exercices</a>
+    <a href="/categories">Catégories</a>
+
+    <a href="/users">Utilisateurs</a>
+    <a href="/seances">Mes séances</a>
+    <a href="/programmes">Programmes</a>
+    <a href="/objectifs">Objectifs</a>
+    <a href="/historique">Historique</a>
+    <span class="nom-user" id="nomUser"></span>
+    <button class="btn-deconnexion" onclick="seDeconnecter()">Déconnexion</button>
+  </div>
+</nav>
+<!-- ===== CONTENU PRINCIPAL ===== -->
+<main>
+  <h2>Gestion des utilisateurs</h2>
+
+  <!-- ===== BARRE D'ACTIONS ET RECHERCHE ===== -->
+  <div class="barre-actions">
+    <div class="filtres">
+      <input type="text" id="rechercheUser" placeholder="Rechercher un utilisateur..." oninput="filtrerUtilisateurs()">
+    </div>
+    <button class="btn-vert" onclick="ouvrirModal()">+ Nouvel utilisateur</button>
+  </div>
+
+  <!-- Tableau de la liste des utilisateurs -->
+  <div class="tableau-container">
+    <table id="tableau-utilisateurs">
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>Nom complet</th>
+          <th>Email</th>
+          <th>Rôle</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-users"></tbody>
+    </table>
+  </div>
+</main>
+
+<!-- ===== MODALE DE CRÉATION/ÉDITION D'UN UTILISATEUR ===== -->
+<div class="modal" id="modal">
+  <div class="modal-contenu">
+    <h3 id="modalTitre">Nouvel utilisateur</h3>
+    <input type="hidden" id="userId">
+    <label>Nom complet *</label>
+    <input type="text" id="userNom" placeholder="Ex: Jean Dupont">
+    <label>Email *</label>
+    <input type="email" id="userEmail" placeholder="Ex: jean@example.com">
+    <label id="labelMDP">Mot de passe *</label>
+    <input type="password" id="userMdp" placeholder="Min. 6 caractères">
+    <label>Rôle</label>
+    <select id="userRole">
+      <option value="sportif">Sportif</option>
+      <option value="admin">Administrateur</option>
+    </select>
+    <label>Âge</label>
+    <input type="number" id="userAge" placeholder="Ex: 28">
+    <label>Poids (kg)</label>
+    <input type="number" id="userPoids" placeholder="Ex: 75">
+    <label>Taille (cm)</label>
+    <input type="number" id="userTaille" placeholder="Ex: 180">
+    <label>Objectif principal</label>
+    <input type="text" id="userObjectif" placeholder="Ex: Prise de masse">
+    <div class="modal-actions">
+      <button class="btn-vert" onclick="sauvegarderUtilisateur()">Sauvegarder</button>
+      <button class="btn-gris" onclick="fermerModal()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCRIPTS ===== -->
+<script src="../js/commun.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/users.js"></script>
+</body>
+</html>

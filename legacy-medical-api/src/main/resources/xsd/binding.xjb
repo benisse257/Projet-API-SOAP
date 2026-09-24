@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxb:bindings version="3.0"
+               xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
+               xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <!-- Mapping imposé par le sujet : xs:date -> java.time.LocalDate -->
+    <jaxb:globalBindings>
+        <jaxb:javaType name="java.time.LocalDate" xmlType="xs:date"
+                       parseMethod="com.legacymedical.util.LocalDateAdapter.parse"
+                       printMethod="com.legacymedical.util.LocalDateAdapter.print"/>
+    </jaxb:globalBindings>
+
+    <!-- Package des classes générées depuis le XSD -->
+    <jaxb:bindings schemaLocation="medical-clearance.xsd" node="/xs:schema">
+        <jaxb:schemaBindings>
+            <jaxb:package name="com.legacymedical.ws"/>
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+
+</jaxb:bindings>

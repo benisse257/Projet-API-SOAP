@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!-- Page catégories FitTracker — Gestion des catégories d'exercices (CRUD administrateur) -->
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>FitTracker — Catégories</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<!-- ===== BARRE DE NAVIGATION ===== -->
+<nav>
+  <div class="logo">FitTracker</div>
+  <div class="nav-links nav-admin" hidden>
+
+  <div class="nav-links nav-sportif">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/exercices">Exercices</a>
+    <a href="/categories" class="active">Catégories</a>
+    <a href="/seances">Mes séances</a>
+    <a href="/programmes">Programmes</a>
+    <a href="/objectifs">Objectifs</a>
+    <a href="/historique">Historique</a>
+    <span class="nom-user" id="nomUser"></span>
+    <button class="btn-deconnexion" onclick="seDeconnecter()">Déconnexion</button>
+  </div>
+</nav>
+<!-- ===== CONTENU PRINCIPAL ===== -->
+<main>
+  <h2>Catégories d'exercices</h2>
+
+  <!-- Bouton d'ajout visible uniquement pour les administrateurs -->
+  <div id="zone-admin-categorie" hidden>
+    <button class="btn-vert" onclick="ouvrirModalCategorie()">+ Ajouter une catégorie</button>
+  </div>
+
+  <!-- Liste des catégories (chargée dynamiquement) -->
+  <div id="liste-categories" class="liste-categories"></div>
+
+  <!-- ===== MODALE D'AJOUT/ÉDITION D'UNE CATÉGORIE ===== -->
+  <div id="modal-categorie" class="modal">
+    <div class="modal-contenu">
+      <h3 id="titre-modal-categorie">Ajouter une catégorie</h3>
+      <form id="form-categorie" onsubmit="sauvegarderCategorie(event)">
+        <div class="form-groupe">
+          <label for="cat-nom">Nom *</label>
+          <input type="text" id="cat-nom" required placeholder="Ex: Cardio">
+        </div>
+        <div class="form-groupe">
+          <label for="cat-description">Description</label>
+          <textarea id="cat-description" placeholder="Description de la catégorie"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-gris" onclick="fermerModalCategorie()">Annuler</button>
+          <button type="submit" class="btn-bleu">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<!-- ===== SCRIPTS ===== -->
+<script src="../js/commun.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/categories.js"></script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<!-- Page objectifs FitTracker — Définition et suivi des objectifs sportifs personnels -->
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>FitTracker — Objectifs</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<!-- ===== BARRE DE NAVIGATION ===== -->
+<nav>
+  <div class="logo">FitTracker</div>
+
+  <div class="nav-links nav-sportif">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/exercices">Exercices</a>
+    <a href="/categories">Catégories</a>
+    <a href="/seances">Mes séances</a>
+    <a href="/programmes">Programmes</a>
+    <a href="/objectifs" class="active">Objectifs</a>
+    <a href="/historique">Historique</a>
+    <span class="nom-user" id="nomUser"></span>
+    <button class="btn-deconnexion" onclick="seDeconnecter()">Déconnexion</button>
+  </div>
+</nav>
+<!-- ===== CONTENU PRINCIPAL ===== -->
+<main>
+  <h2>Mes objectifs</h2>
+  <div class="barre-actions">
+    <span></span>
+    <button class="btn-vert" onclick="ouvrirModal()">+ Nouvel objectif</button>
+  </div>
+  <!-- Liste des objectifs (chargée dynamiquement) -->
+  <div id="listeObjectifs"></div>
+</main>
+
+<!-- ===== MODALE DE CRÉATION/ÉDITION D'UN OBJECTIF ===== -->
+<div class="modal" id="modal">
+  <div class="modal-contenu">
+    <h3 id="modalTitre">Nouvel objectif</h3>
+    <input type="hidden" id="objId">
+    <label>Titre</label>
+    <input type="text" id="objTitre" placeholder="Ex: Courir 5km sans pause">
+    <label>Type</label>
+    <select id="objType">
+      <option value="poids">Poids (kg)</option>
+      <option value="seances_par_semaine">Séances par semaine</option>
+      <option value="calories">Calories brûlées</option>
+      <option value="performance">Performance</option>
+    </select>
+    <label>Valeur cible</label>
+    <input type="number" id="objCible" placeholder="Ex: 80">
+    <label>Valeur actuelle</label>
+    <input type="number" id="objActuelle" placeholder="Ex: 65">
+    <label>Date d'échéance (optionnel)</label>
+    <input type="date" id="objDate">
+    <small style="color:var(--text-muted,#94a3b8);display:block;margin-top:0.25rem">Le statut est calculé automatiquement selon la progression et la date d'échéance.</small>
+    <div class="modal-actions">
+      <button class="btn-vert" onclick="sauvegarderObjectif()">Sauvegarder</button>
+      <button class="btn-gris" onclick="fermerModal()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCRIPTS ===== -->
+<script src="../js/commun.js"></script>
+<script src="../js/objectifs.js"></script>
+</body>
+</html>

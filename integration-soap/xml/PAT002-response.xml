@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-16"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Header />
+   <SOAP-ENV:Body>
+      <ns2:GetMedicalClearanceAndRestrictionsResponse xmlns:ns2="http://legacymedical.com/ws">
+         <ns2:medicalProfile>
+            <ns2:maxHeartRate>150</ns2:maxHeartRate>
+            <ns2:jointRestrictions>
+               <ns2:jointRestriction>
+                  <ns2:bodyPart>SHOULDER</ns2:bodyPart>
+                  <ns2:restrictionType>NO_HEAVY_LIFTING</ns2:restrictionType>
+               </ns2:jointRestriction>
+            </ns2:jointRestrictions>
+            <ns2:allowedExercises>
+               <ns2:exerciseId>EX002</ns2:exerciseId>
+               <ns2:exerciseId>EX004</ns2:exerciseId>
+               <ns2:exerciseId>EX006</ns2:exerciseId>
+            </ns2:allowedExercises>
+            <ns2:clearanceExpiryDate>2027-06-30</ns2:clearanceExpiryDate>
+         </ns2:medicalProfile>
+      </ns2:GetMedicalClearanceAndRestrictionsResponse>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

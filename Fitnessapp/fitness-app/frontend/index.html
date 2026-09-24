@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitTracker — Connexion</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="auth-container">
+  <div class="auth-box">
+    <h1>FitTracker</h1>
+    <p>Votre compagnon sportif personnel</p>
+
+    <div class="tabs">
+      <button class="tab active" onclick="afficherOnglet('connexion')">Connexion</button>
+      <button class="tab"        onclick="afficherOnglet('inscription')">Inscription</button>
+    </div>
+
+    <!-- Connexion -->
+    <div id="connexion" class="form-section">
+      <input type="email"    id="c-email" placeholder="Email">
+      <div class="password-field">
+        <input type="password" id="c-mdp" placeholder="Mot de passe">
+        <button type="button" class="password-toggle" onclick="togglePassword('c-mdp', this)" aria-label="Afficher le mot de passe">Afficher</button>
+      </div>
+      <button class="btn-principal" onclick="seConnecter()">Se connecter</button>
+    </div>
+
+    <!-- Inscription -->
+    <div id="inscription" class="form-section" hidden>
+      <input type="text"     id="i-nom"    placeholder="Nom complet">
+      <input type="email"    id="i-email"  placeholder="Email">
+      <div class="password-field">
+        <input type="password" id="i-mdp" placeholder="Mot de passe (min. 6 caractères)">
+        <button type="button" class="password-toggle" onclick="togglePassword('i-mdp', this)" aria-label="Afficher le mot de passe">Afficher</button>
+      </div>
+      <input type="number"   id="i-age"    placeholder="Âge">
+      <input type="number"   id="i-poids"  placeholder="Poids (kg)">
+      <input type="number"   id="i-taille" placeholder="Taille (cm)">
+      <select id="i-objectif">
+        <option value="">-- Objectif principal --</option>
+        <option value="Prise de masse">Prise de masse</option>
+        <option value="Perte de poids">Perte de poids</option>
+        <option value="Maintien">Maintien</option>
+        <option value="Endurance">Endurance</option>
+        <option value="Flexibilite">Flexibilité</option>
+      </select>
+      <button class="btn-principal" onclick="sInscrire()">S'inscrire</button>
+    </div>
+
+    <p id="msg" class="msg-erreur"></p>
+  </div>
+</div>
+<script src="/js/auth.js"></script>
+</body>
+</html>
