@@ -11,11 +11,7 @@
                   <ns2:restrictionType>NO_HEAVY_LIFTING</ns2:restrictionType>
                </ns2:jointRestriction>
             </ns2:jointRestrictions>
-            <ns2:allowedExercises>
-               <ns2:exerciseId>EX002</ns2:exerciseId>
-               <ns2:exerciseId>EX004</ns2:exerciseId>
-               <ns2:exerciseId>EX006</ns2:exerciseId>
-            </ns2:allowedExercises>
+            <ns2:allowedExercises />
             <ns2:clearanceExpiryDate>2027-06-30</ns2:clearanceExpiryDate>
          </ns2:medicalProfile>
       </ns2:GetMedicalClearanceAndRestrictionsResponse>

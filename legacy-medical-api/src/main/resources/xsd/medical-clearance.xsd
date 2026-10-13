@@ -56,7 +56,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <!-- Liste des exercices autorisés (décision B : table allowed_exercise) -->
+    <!-- Le champ est imposé par le contrat; aucune table SQL du sujet ne l'alimente. -->
     <xs:complexType name="AllowedExercises">
         <xs:sequence>
             <xs:element name="exerciseId" type="xs:string"

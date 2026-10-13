@@ -24,3 +24,9 @@ target/
 Thumbs.db
 *.log
 *.tmp
+*.err
+*.out
+
+# --- Données et sorties locales non destinées au dépôt ---
+Fitnessapp/fitness-app/dbdata/
+legacy-medical-api/out.txt

@@ -19,8 +19,8 @@ const peupler = async () => {
     await Objectif.deleteMany();
     console.log('Collections videes');
     const u1 = new User({ nom: 'Admin', email: 'admin@fittracker.com', motDePasse: 'admin123', role: 'admin', age: 30, poids: 80, taille: 180, objectif_principal: 'Maintien' });
-    const u2 = new User({ nom: 'Jean',  email: 'jean@gmail.com',       motDePasse: 'jean1234', role: 'user',  age: 25, poids: 75, taille: 178, objectif_principal: 'Prise de masse' });
-    const u3 = new User({ nom: 'Marie', email: 'marie@gmail.com',      motDePasse: 'marie1234',role: 'user',  age: 28, poids: 60, taille: 165, objectif_principal: 'Perte de poids' });
+    const u2 = new User({ nom: 'Jean',  email: 'jean@gmail.com',       motDePasse: 'jean1234', role: 'sportif', age: 25, poids: 75, taille: 178, objectif_principal: 'Prise de masse', patientExternalId: 'PAT001' });
+    const u3 = new User({ nom: 'Marie', email: 'marie@gmail.com',      motDePasse: 'marie1234',role: 'sportif', age: 28, poids: 60, taille: 165, objectif_principal: 'Perte de poids' });
     await u1.save(); await u2.save(); await u3.save();
     console.log('3 users OK');
     const exos = await Exercice.insertMany([
@@ -54,11 +54,11 @@ const peupler = async () => {
     console.log('8 details OK');
     const d = (n) => new Date(Date.now() - n * 86400000);
     await Historique.insertMany([
-      { utilisateur: u2._id, seance: s1._id, dateEntrainement: d(1), dureeReelle: 48, calories: 320, ressenti: 'moyen',    notes: 'Bonne seance' },
-      { utilisateur: u2._id, seance: s1._id, dateEntrainement: d(4), dureeReelle: 50, calories: 340, ressenti: 'difficile', notes: 'Charges augmentees' },
-      { utilisateur: u2._id, seance: s2._id, dateEntrainement: d(6), dureeReelle: 42, calories: 280, ressenti: 'facile',    notes: '' },
-      { utilisateur: u3._id, seance: s3._id, dateEntrainement: d(2), dureeReelle: 32, calories: 400, ressenti: 'difficile', notes: 'Bonne sudation' },
-      { utilisateur: u3._id, seance: s3._id, dateEntrainement: d(5), dureeReelle: 30, calories: 370, ressenti: 'moyen',     notes: '' },
+      { utilisateur_id: u2._id, seance_id: s1._id, dateRealisation: d(1), dureeTotale: 48, caloriesEstimees: 320, commentaire: 'Bonne seance' },
+      { utilisateur_id: u2._id, seance_id: s1._id, dateRealisation: d(4), dureeTotale: 50, caloriesEstimees: 340, commentaire: 'Charges augmentees' },
+      { utilisateur_id: u2._id, seance_id: s2._id, dateRealisation: d(6), dureeTotale: 42, caloriesEstimees: 280, commentaire: '' },
+      { utilisateur_id: u3._id, seance_id: s3._id, dateRealisation: d(2), dureeTotale: 32, caloriesEstimees: 400, commentaire: 'Bonne sudation' },
+      { utilisateur_id: u3._id, seance_id: s3._id, dateRealisation: d(5), dureeTotale: 30, caloriesEstimees: 370, commentaire: '' },
     ]);
     console.log('5 historiques OK');
     await Objectif.insertMany([

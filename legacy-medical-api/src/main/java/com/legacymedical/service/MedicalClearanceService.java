@@ -3,7 +3,6 @@ package com.legacymedical.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.legacymedical.model.AllowedExercise;
 import com.legacymedical.model.MedicalRestriction;
 import com.legacymedical.model.PatientRecord;
 import com.legacymedical.model.RestrictionType;
@@ -16,7 +15,8 @@ import com.legacymedical.ws.MedicalProfile;
 
 /**
  * Service métier du legacy-medical-api.
- * Adapte les donnees SQL (entites JPA) vers le contrat SOAP (classes generees du XSD).
+ * Adapte les donnees SQL (entites JPA) vers le contrat SOAP (classes generees
+ * du XSD).
  * L'Endpoint SOAP ne contient aucune logique metier (regle d'or du sujet).
  */
 @Service
@@ -30,8 +30,8 @@ public class MedicalClearanceService {
 
     /**
      * @Transactional(readOnly = true) : garde la session Hibernate ouverte pendant
-     * tout le mapping pour pouvoir lire les collections lazy (restrictions,
-     * allowedExercises) sur le PatientRecord.
+     *                         tout le mapping pour pouvoir lire la collection lazy
+     *                         des restrictions.
      */
     @Transactional(readOnly = true)
     public GetMedicalClearanceAndRestrictionsResponse getMedicalClearanceAndRestrictions(String patientExternalId) {
@@ -44,7 +44,8 @@ public class MedicalClearanceService {
         // maxHeartRate : entite JPA -> contrat SOAP
         profile.setMaxHeartRate(record.getMaxHeartRate());
 
-        // clearanceExpiryDate : LocalDate (entite) -> LocalDate (xsd:date via binding JAXB)
+        // clearanceExpiryDate : LocalDate (entite) -> LocalDate (xsd:date via binding
+        // JAXB)
         profile.setClearanceExpiryDate(record.getClearanceExpiryDate());
 
         // jointRestrictions : liste des parties du corps avec leur type de restriction
@@ -57,12 +58,8 @@ public class MedicalClearanceService {
         }
         profile.setJointRestrictions(restrictions);
 
-        // allowedExercises : liste des exercices autorises (decision B documentee dans le rapport)
-        AllowedExercises exercises = new AllowedExercises();
-        for (AllowedExercise exercise : record.getAllowedExercises()) {
-            exercises.getExerciseId().add(exercise.getExerciseId());
-        }
-        profile.setAllowedExercises(exercises);
+        // Le sujet ne fournit aucune table SQL source pour cette liste.
+        profile.setAllowedExercises(new AllowedExercises());
 
         response.setMedicalProfile(profile);
         return response;

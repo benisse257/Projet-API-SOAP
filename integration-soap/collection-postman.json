@@ -14,13 +14,49 @@
         "url": {
           "raw": "http://localhost:8080/ws/mon-service.wsdl",
           "protocol": "http",
-          "host": ["localhost"],
+          "host": [
+            "localhost"
+          ],
           "port": "8080",
-          "path": ["ws", "mon-service.wsdl"]
+          "path": [
+            "ws",
+            "mon-service.wsdl"
+          ]
         },
         "description": "Récupère le WSDL généré par Spring WS à partir du XSD."
       },
-      "response": []
+      "response": [
+        {
+          "name": "Réponse WSDL (contrat généré par Spring-WS)",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/ws/mon-service.wsdl",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "ws",
+                "mon-service.wsdl"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "xml",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "text/xml;charset=UTF-8"
+            }
+          ],
+          "cookie": [],
+          "body": "<wsdl:definitions xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\" xmlns:sch=\"http://legacymedical.com/ws\" xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\" xmlns:tns=\"http://legacymedical.com/ws\" targetNamespace=\"http://legacymedical.com/ws\">\r\n  <wsdl:types>\r\n    <xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" elementFormDefault=\"qualified\" targetNamespace=\"http://legacymedical.com/ws\">\r\n\r\n    <!-- ===== Requête ===== -->\r\n    <xs:element name=\"GetMedicalClearanceAndRestrictionsRequest\">\r\n        <xs:complexType>\r\n            <xs:sequence>\r\n                <xs:element name=\"patientExternalId\" type=\"xs:string\"/>\r\n            </xs:sequence>\r\n        </xs:complexType>\r\n    </xs:element>\r\n\r\n    <!-- ===== Réponse ===== -->\r\n    <xs:element name=\"GetMedicalClearanceAndRestrictionsResponse\">\r\n        <xs:complexType>\r\n            <xs:sequence>\r\n                <xs:element name=\"medicalProfile\" type=\"tns:MedicalProfile\"/>\r\n            </xs:sequence>\r\n        </xs:complexType>\r\n    </xs:element>\r\n\r\n    <!-- Profil médical complet -->\r\n    <xs:complexType name=\"MedicalProfile\">\r\n        <xs:sequence>\r\n            <xs:element name=\"maxHeartRate\" type=\"xs:int\"/>\r\n            <xs:element name=\"jointRestrictions\" type=\"tns:JointRestrictions\"/>\r\n            <xs:element name=\"allowedExercises\" type=\"tns:AllowedExercises\"/>\r\n            <xs:element name=\"clearanceExpiryDate\" type=\"xs:date\"/>\r\n        </xs:sequence>\r\n    </xs:complexType>\r\n\r\n    <!-- Liste des restrictions articulaires -->\r\n    <xs:complexType name=\"JointRestrictions\">\r\n        <xs:sequence>\r\n            <xs:element maxOccurs=\"unbounded\" minOccurs=\"0\" name=\"jointRestriction\" type=\"tns:JointRestriction\"/>\r\n        </xs:sequence>\r\n    </xs:complexType>\r\n\r\n    <!-- Une restriction : partie du corps + type -->\r\n    <xs:complexType name=\"JointRestriction\">\r\n        <xs:sequence>\r\n            <xs:element name=\"bodyPart\" type=\"xs:string\"/>\r\n            <xs:element name=\"restrictionType\" type=\"tns:RestrictionType\"/>\r\n        </xs:sequence>\r\n    </xs:complexType>\r\n\r\n    <!-- Types de restrictions (valeurs exactes du sujet) -->\r\n    <xs:simpleType name=\"RestrictionType\">\r\n        <xs:restriction base=\"xs:string\">\r\n            <xs:enumeration value=\"AVOID_IMPACT\"/>\r\n            <xs:enumeration value=\"NO_HEAVY_LIFTING\"/>\r\n        </xs:restriction>\r\n    </xs:simpleType>\r\n\r\n    <!-- Le champ est imposé par le contrat; aucune table SQL ne l'alimente. -->\r\n    <xs:complexType name=\"AllowedExercises\">\r\n        <xs:sequence>\r\n            <xs:element maxOccurs=\"unbounded\" minOccurs=\"0\" name=\"exerciseId\" type=\"xs:string\"/>\r\n        </xs:sequence>\r\n    </xs:complexType>\r\n\r\n</xs:schema>\r\n  </wsdl:types>\r\n  <wsdl:message name=\"GetMedicalClearanceAndRestrictionsResponse\">\r\n    <wsdl:part element=\"tns:GetMedicalClearanceAndRestrictionsResponse\" name=\"GetMedicalClearanceAndRestrictionsResponse\">\r\n    </wsdl:part>\r\n  </wsdl:message>\r\n  <wsdl:message name=\"GetMedicalClearanceAndRestrictionsRequest\">\r\n    <wsdl:part element=\"tns:GetMedicalClearanceAndRestrictionsRequest\" name=\"GetMedicalClearanceAndRestrictionsRequest\">\r\n    </wsdl:part>\r\n  </wsdl:message>\r\n  <wsdl:portType name=\"MedicalClearancePort\">\r\n    <wsdl:operation name=\"GetMedicalClearanceAndRestrictions\">\r\n      <wsdl:input message=\"tns:GetMedicalClearanceAndRestrictionsRequest\" name=\"GetMedicalClearanceAndRestrictionsRequest\">\r\n    </wsdl:input>\r\n      <wsdl:output message=\"tns:GetMedicalClearanceAndRestrictionsResponse\" name=\"GetMedicalClearanceAndRestrictionsResponse\">\r\n    </wsdl:output>\r\n    </wsdl:operation>\r\n  </wsdl:portType>\r\n  <wsdl:binding name=\"MedicalClearancePortSoap11\" type=\"tns:MedicalClearancePort\">\r\n    <soap:binding style=\"document\" transport=\"http://schemas.xmlsoap.org/soap/http\"/>\r\n    <wsdl:operation name=\"GetMedicalClearanceAndRestrictions\">\r\n      <soap:operation soapAction=\"\"/>\r\n      <wsdl:input name=\"GetMedicalClearanceAndRestrictionsRequest\">\r\n        <soap:body use=\"literal\"/>\r\n      </wsdl:input>\r\n      <wsdl:output name=\"GetMedicalClearanceAndRestrictionsResponse\">\r\n        <soap:body use=\"literal\"/>\r\n      </wsdl:output>\r\n    </wsdl:operation>\r\n  </wsdl:binding>\r\n  <wsdl:service name=\"MedicalClearancePortService\">\r\n    <wsdl:port binding=\"tns:MedicalClearancePortSoap11\" name=\"MedicalClearancePortSoap11\">\r\n      <soap:address location=\"http://localhost:8080/ws\"/>\r\n    </wsdl:port>\r\n  </wsdl:service>\r\n</wsdl:definitions>"
+        }
+      ]
     },
     {
       "name": "2. SOAP - PAT001 (succès, 2 restrictions)",
@@ -43,11 +79,15 @@
         "url": {
           "raw": "http://localhost:8080/ws",
           "protocol": "http",
-          "host": ["localhost"],
+          "host": [
+            "localhost"
+          ],
           "port": "8080",
-          "path": ["ws"]
+          "path": [
+            "ws"
+          ]
         },
-        "description": "Retour attendu : maxHeartRate=160, KNEE/AVOID_IMPACT, BACK/NO_HEAVY_LIFTING, EX001/EX003, clearanceExpiryDate=2027-12-31."
+        "description": "Retour attendu : maxHeartRate=160, KNEE/AVOID_IMPACT, BACK/NO_HEAVY_LIFTING, allowedExercises vide, clearanceExpiryDate=2027-12-31."
       },
       "response": [
         {
@@ -67,9 +107,13 @@
             "url": {
               "raw": "http://localhost:8080/ws",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "8080",
-              "path": ["ws"]
+              "path": [
+                "ws"
+              ]
             }
           },
           "status": "OK",
@@ -82,7 +126,7 @@
             }
           ],
           "cookie": [],
-          "body": "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n   <SOAP-ENV:Header />\n   <SOAP-ENV:Body>\n      <ns2:GetMedicalClearanceAndRestrictionsResponse xmlns:ns2=\"http://legacymedical.com/ws\">\n         <ns2:medicalProfile>\n            <ns2:maxHeartRate>160</ns2:maxHeartRate>\n            <ns2:jointRestrictions>\n               <ns2:jointRestriction>\n                  <ns2:bodyPart>KNEE</ns2:bodyPart>\n                  <ns2:restrictionType>AVOID_IMPACT</ns2:restrictionType>\n               </ns2:jointRestriction>\n               <ns2:jointRestriction>\n                  <ns2:bodyPart>BACK</ns2:bodyPart>\n                  <ns2:restrictionType>NO_HEAVY_LIFTING</ns2:restrictionType>\n               </ns2:jointRestriction>\n            </ns2:jointRestrictions>\n            <ns2:allowedExercises>\n               <ns2:exerciseId>EX001</ns2:exerciseId>\n               <ns2:exerciseId>EX003</ns2:exerciseId>\n            </ns2:allowedExercises>\n            <ns2:clearanceExpiryDate>2027-12-31</ns2:clearanceExpiryDate>\n         </ns2:medicalProfile>\n      </ns2:GetMedicalClearanceAndRestrictionsResponse>\n   </SOAP-ENV:Body>\n</SOAP-ENV:Envelope>"
+          "body": "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n   <SOAP-ENV:Header />\n   <SOAP-ENV:Body>\n      <ns2:GetMedicalClearanceAndRestrictionsResponse xmlns:ns2=\"http://legacymedical.com/ws\">\n         <ns2:medicalProfile>\n            <ns2:maxHeartRate>160</ns2:maxHeartRate>\n            <ns2:jointRestrictions>\n               <ns2:jointRestriction>\n                  <ns2:bodyPart>KNEE</ns2:bodyPart>\n                  <ns2:restrictionType>AVOID_IMPACT</ns2:restrictionType>\n               </ns2:jointRestriction>\n               <ns2:jointRestriction>\n                  <ns2:bodyPart>BACK</ns2:bodyPart>\n                  <ns2:restrictionType>NO_HEAVY_LIFTING</ns2:restrictionType>\n               </ns2:jointRestriction>\n            </ns2:jointRestrictions>\n            <ns2:allowedExercises />\n            <ns2:clearanceExpiryDate>2027-12-31</ns2:clearanceExpiryDate>\n         </ns2:medicalProfile>\n      </ns2:GetMedicalClearanceAndRestrictionsResponse>\n   </SOAP-ENV:Body>\n</SOAP-ENV:Envelope>"
         }
       ]
     },
@@ -107,11 +151,15 @@
         "url": {
           "raw": "http://localhost:8080/ws",
           "protocol": "http",
-          "host": ["localhost"],
+          "host": [
+            "localhost"
+          ],
           "port": "8080",
-          "path": ["ws"]
+          "path": [
+            "ws"
+          ]
         },
-        "description": "Retour attendu : maxHeartRate=150, SHOULDER/NO_HEAVY_LIFTING, EX002/EX004/EX006, clearanceExpiryDate=2027-06-30."
+        "description": "Retour attendu : maxHeartRate=150, SHOULDER/NO_HEAVY_LIFTING, allowedExercises vide, clearanceExpiryDate=2027-06-30."
       },
       "response": [
         {
@@ -131,9 +179,13 @@
             "url": {
               "raw": "http://localhost:8080/ws",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "8080",
-              "path": ["ws"]
+              "path": [
+                "ws"
+              ]
             }
           },
           "status": "OK",
@@ -146,7 +198,7 @@
             }
           ],
           "cookie": [],
-          "body": "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n   <SOAP-ENV:Header />\n   <SOAP-ENV:Body>\n      <ns2:GetMedicalClearanceAndRestrictionsResponse xmlns:ns2=\"http://legacymedical.com/ws\">\n         <ns2:medicalProfile>\n            <ns2:maxHeartRate>150</ns2:maxHeartRate>\n            <ns2:jointRestrictions>\n               <ns2:jointRestriction>\n                  <ns2:bodyPart>SHOULDER</ns2:bodyPart>\n                  <ns2:restrictionType>NO_HEAVY_LIFTING</ns2:restrictionType>\n               </ns2:jointRestriction>\n            </ns2:jointRestrictions>\n            <ns2:allowedExercises>\n               <ns2:exerciseId>EX002</ns2:exerciseId>\n               <ns2:exerciseId>EX004</ns2:exerciseId>\n               <ns2:exerciseId>EX006</ns2:exerciseId>\n            </ns2:allowedExercises>\n            <ns2:clearanceExpiryDate>2027-06-30</ns2:clearanceExpiryDate>\n         </ns2:medicalProfile>\n      </ns2:GetMedicalClearanceAndRestrictionsResponse>\n   </SOAP-ENV:Body>\n</SOAP-ENV:Envelope>"
+          "body": "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n   <SOAP-ENV:Header />\n   <SOAP-ENV:Body>\n      <ns2:GetMedicalClearanceAndRestrictionsResponse xmlns:ns2=\"http://legacymedical.com/ws\">\n         <ns2:medicalProfile>\n            <ns2:maxHeartRate>150</ns2:maxHeartRate>\n            <ns2:jointRestrictions>\n               <ns2:jointRestriction>\n                  <ns2:bodyPart>SHOULDER</ns2:bodyPart>\n                  <ns2:restrictionType>NO_HEAVY_LIFTING</ns2:restrictionType>\n               </ns2:jointRestriction>\n            </ns2:jointRestrictions>\n            <ns2:allowedExercises />\n            <ns2:clearanceExpiryDate>2027-06-30</ns2:clearanceExpiryDate>\n         </ns2:medicalProfile>\n      </ns2:GetMedicalClearanceAndRestrictionsResponse>\n   </SOAP-ENV:Body>\n</SOAP-ENV:Envelope>"
         }
       ]
     },
@@ -171,9 +223,13 @@
         "url": {
           "raw": "http://localhost:8080/ws",
           "protocol": "http",
-          "host": ["localhost"],
+          "host": [
+            "localhost"
+          ],
           "port": "8080",
-          "path": ["ws"]
+          "path": [
+            "ws"
+          ]
         },
         "description": "Patient inexistant : Spring WS renvoie une SOAP Fault (faultcode SOAP-ENV:Client, faultstring 'Patient inexistant : PAT999')."
       },
@@ -195,9 +251,13 @@
             "url": {
               "raw": "http://localhost:8080/ws",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "8080",
-              "path": ["ws"]
+              "path": [
+                "ws"
+              ]
             }
           },
           "status": "Internal Server Error",
@@ -226,16 +286,22 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"email\": \"med@example.com\",\n  \"motDePasse\": \"Password123\"\n}"
+          "raw": "{\n  \"email\": \"jean@gmail.com\",\n  \"motDePasse\": \"jean1234\"\n}"
         },
         "url": {
           "raw": "http://localhost:5000/api/auth/login",
           "protocol": "http",
-          "host": ["localhost"],
+          "host": [
+            "localhost"
+          ],
           "port": "5000",
-          "path": ["api", "auth", "login"]
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
         },
-        "description": "Copier le champ 'token' de la réponse, puis l'utiliser dans la requête suivante (Bearer)."
+        "description": "Compte créé par `npm run seed`, déjà rattaché au dossier médical legacy PAT001. Copier le champ 'token' de la réponse, puis l'utiliser dans la requête suivante (Bearer)."
       },
       "response": [
         {
@@ -250,14 +316,20 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"med@example.com\",\n  \"motDePasse\": \"Password123\"\n}"
+              "raw": "{\n  \"email\": \"jean@gmail.com\",\n  \"motDePasse\": \"jean1234\"\n}"
             },
             "url": {
               "raw": "http://localhost:5000/api/auth/login",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["api", "auth", "login"]
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
             }
           },
           "status": "OK",
@@ -270,7 +342,7 @@
             }
           ],
           "cookie": [],
-          "body": "{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"user\": {\n    \"id\": \"6ab50f2e1d5a9807ac0e7ac7\",\n    \"nom\": \"Patient test\",\n    \"email\": \"med@example.com\",\n    \"role\": \"sportif\"\n  }\n}"
+          "body": "{\n  \"token\": \"<token JWT retourné au login>\",\n  \"user\": {\n    \"id\": \"<id utilisateur>\",\n    \"nom\": \"Jean\",\n    \"email\": \"jean@gmail.com\",\n    \"role\": \"sportif\"\n  }\n}"
         }
       ]
     },
@@ -287,9 +359,15 @@
         "url": {
           "raw": "http://localhost:5000/api/medical/profile",
           "protocol": "http",
-          "host": ["localhost"],
+          "host": [
+            "localhost"
+          ],
           "port": "5000",
-          "path": ["api", "medical", "profile"]
+          "path": [
+            "api",
+            "medical",
+            "profile"
+          ]
         },
         "description": "Appelle Spring Boot via SOAP, mappe la réponse et enregistre/met à jour le MedicalProfile dans MongoDB (upsert)."
       },
@@ -307,9 +385,15 @@
             "url": {
               "raw": "http://localhost:5000/api/medical/profile",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["api", "medical", "profile"]
+              "path": [
+                "api",
+                "medical",
+                "profile"
+              ]
             }
           },
           "status": "OK",
@@ -322,7 +406,79 @@
             }
           ],
           "cookie": [],
-          "body": "{\n  \"success\": true,\n  \"data\": {\n    \"_id\": \"6ab518e4b8f2927de79b1183\",\n    \"userId\": \"6ab50f2e1d5a9807ac0e7ac7\",\n    \"patientExternalId\": \"PAT001\",\n    \"maxHeartRate\": 160,\n    \"jointRestrictions\": [\n      { \"bodyPart\": \"KNEE\", \"restrictionType\": \"AVOID_IMPACT\" },\n      { \"bodyPart\": \"BACK\", \"restrictionType\": \"NO_HEAVY_LIFTING\" }\n    ],\n    \"allowedExercises\": [\"EX001\", \"EX003\"],\n    \"clearanceExpiryDate\": \"2027-12-31\",\n    \"lastSyncedAt\": \"2026-09-24T12:40:12.985Z\"\n  },\n  \"source\": \"SOAP\"\n}"
+          "body": "{\n  \"success\": true,\n  \"data\": {\n    \"_id\": \"<medical profile id>\",\n    \"userId\": \"<user id>\",\n    \"patientExternalId\": \"PAT001\",\n    \"maxHeartRate\": 160,\n    \"jointRestrictions\": [\n      { \"bodyPart\": \"KNEE\", \"restrictionType\": \"AVOID_IMPACT\" },\n      { \"bodyPart\": \"BACK\", \"restrictionType\": \"NO_HEAVY_LIFTING\" }\n    ],\n    \"allowedExercises\": [],\n    \"clearanceExpiryDate\": \"2027-12-31\",\n    \"lastSyncedAt\": \"<date de synchronisation>\"\n  },\n  \"source\": \"SOAP\"\n}"
+        },
+        {
+          "name": "Réponse GET /api/medical/profile — patient legacy inconnu (SOAP Fault)",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/medical/profile",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "medical",
+                "profile"
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"success\": false,\n  \"message\": \"SOAP-ENV:Client: Patient inexistant : PAT999\",\n  \"patientExternalId\": \"PAT999\"\n}"
+        },
+        {
+          "name": "Réponse GET /api/medical/profile — Spring Boot arrêté",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/medical/profile",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "medical",
+                "profile"
+              ]
+            }
+          },
+          "status": "Service Unavailable",
+          "code": 503,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"success\": false,\n  \"message\": \"Service médical injoignable (http://localhost:8080/ws/mon-service.wsdl) : connect ECONNREFUSED 127.0.0.1:8080\",\n  \"patientExternalId\": \"PAT001\"\n}"
         }
       ]
     },
@@ -348,9 +504,15 @@
         "url": {
           "raw": "http://localhost:5000/api/medical/validate-program",
           "protocol": "http",
-          "host": ["localhost"],
+          "host": [
+            "localhost"
+          ],
           "port": "5000",
-          "path": ["api", "medical", "validate-program"]
+          "path": [
+            "api",
+            "medical",
+            "validate-program"
+          ]
         },
         "description": "Vérifie chaque exercice du programme contre les restrictions médicales (remontées SOAP) : clearance, allowedExercises, AVOID_IMPACT, NO_HEAVY_LIFTING. Réponse : decision AUTORISE/BLOQUE + exercices bloqués."
       },
@@ -372,9 +534,15 @@
             "url": {
               "raw": "http://localhost:5000/api/medical/validate-program",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["api", "medical", "validate-program"]
+              "path": [
+                "api",
+                "medical",
+                "validate-program"
+              ]
             }
           },
           "status": "OK",
@@ -387,7 +555,7 @@
             }
           ],
           "cookie": [],
-          "body": "{\n  \"success\": true,\n  \"data\": {\n    \"programmeId\": \"66f9f1f9c8f3b3e4b2d5a901\",\n    \"programmeNom\": \"Programme validation PAT001\",\n    \"athlete\": { \"id\": \"66f9f1f9c8f3b3e4b2d5a900\", \"nom\": \"Patient test\", \"patientExternalId\": \"PAT001\" },\n    \"profil\": {\n      \"maxHeartRate\": 160,\n      \"clearanceExpiryDate\": \"2027-12-31\",\n      \"clearanceExpiree\": false,\n      \"jointRestrictions\": [\n        { \"bodyPart\": \"KNEE\", \"restrictionType\": \"AVOID_IMPACT\" },\n        { \"bodyPart\": \"BACK\", \"restrictionType\": \"NO_HEAVY_LIFTING\" }\n      ],\n      \"allowedExercises\": [\"EX001\", \"EX003\"]\n    },\n    \"decision\": \"BLOQUE\",\n    \"resume\": { \"exercices\": 6, \"autorises\": 2, \"bloques\": 4 },\n    \"blocages\": [\n      { \"exerciceId\": \"66f9f1f9c8f3b3e4b2d5a910\", \"exerciceNom\": \"Squat\", \"seanceNom\": \"Séance validation 1\", \"raisons\": [\"Articulation KNEE (AVOID_IMPACT) : exercice a impact interdit (muscles : quadriceps)\"] }\n    ]\n  }\n}"
+          "body": "{\n  \"success\": true,\n  \"data\": {\n    \"programmeId\": \"<programme id>\",\n    \"programmeNom\": \"Programme validation PAT001\",\n    \"athlete\": {\n      \"id\": \"<user id>\",\n      \"nom\": \"Jean\",\n      \"patientExternalId\": \"PAT001\"\n    },\n    \"profil\": {\n      \"maxHeartRate\": 160,\n      \"clearanceExpiryDate\": \"2027-12-31\",\n      \"clearanceExpiree\": false,\n      \"jointRestrictions\": [\n        {\n          \"bodyPart\": \"KNEE\",\n          \"restrictionType\": \"AVOID_IMPACT\"\n        },\n        {\n          \"bodyPart\": \"BACK\",\n          \"restrictionType\": \"NO_HEAVY_LIFTING\"\n        }\n      ],\n      \"allowedExercises\": []\n    },\n    \"decision\": \"BLOQUE\",\n    \"resume\": {\n      \"exercices\": 6,\n      \"autorises\": 4,\n      \"bloques\": 2\n    },\n    \"blocages\": [\n      {\n        \"exerciceId\": \"<exercise id>\",\n        \"exerciceNom\": \"Squat\",\n        \"seanceNom\": \"Seance validation 1\",\n        \"raisons\": [\n          \"Articulation KNEE (AVOID_IMPACT) : exercice a impact interdit (muscles : quadriceps)\"\n        ]\n      },\n      {\n        \"exerciceId\": \"<exercise id>\",\n        \"exerciceNom\": \"Course rapide\",\n        \"seanceNom\": \"Seance validation 2\",\n        \"raisons\": [\n          \"Articulation KNEE (AVOID_IMPACT) : exercice a impact interdit (muscles : jambes)\"\n        ]\n      }\n    ]\n  }\n}"
         }
       ]
     }

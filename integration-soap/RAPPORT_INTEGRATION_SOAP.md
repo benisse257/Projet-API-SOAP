@@ -35,7 +35,7 @@ Node.js est uniquement un **adaptateur SOAP** (appel WSDL → mapping XML/JSON �
 | Question du sujet | Décision | Justification |
 |---|---|---|
 | `getMedicalClearance` vs `getMedicalClearanceAndRestrictions` | **`getMedicalClearanceAndRestrictions`** | Nom le plus descriptif (il renvoie restrictions + clearance). Utilisé partout : XSD, classe générée JAXB, `@PayloadRoot`, service Node, Postman. |
-| `allowedExercises` sans table source dans le sujet | Création d'une **3ᵉ table `allowed_exercise`** | Le sujet exige ce champ dans la réponse SOAP mais ne décrit AUCUNE table pour l'alimenter. Décision signalée (pas faite en silence) et documentée : table minimale `allowed_exercise(patient_record_id, exercise_id)`. |
+| `allowedExercises` sans table source dans le sujet | Champ conservé dans le XSD, liste vide en réponse | Le modèle SQL reste limité aux deux tables demandées. Aucune table ni règle de whitelist n'est inventée; Node n'applique pas de whitelist quand cette liste est vide. |
 | Date | `LocalDate` → `xs:date` → chaîne `yyyy-MM-dd` JSON → `Date` Mongo | Adapter JAXB `LocalDateAdapter` (binding.xjb) ; côté Node, `new Date("2027-12-31T00:00:00Z")` puis stockage Mongoose `Date`, rendu `yyyy-MM-dd`. |
 | Base SQL | H2 en mémoire | Aucune installation nécessaire, données injectées au démarrage (`DataInitializer`). |
 
@@ -43,24 +43,23 @@ Node.js est uniquement un **adaptateur SOAP** (appel WSDL → mapping XML/JSON �
 
 | Élément | Fichier |
 |---|---|
-| PDF sujet / contrat | `src/main/resources/xsd/medical-clearance.xsd` |
+| Contrat XML | `src/main/resources/xsd/medical-clearance.xsd` |
 | Binding JAXB (dates + package) | `src/main/resources/xsd/binding.xjb` |
-| Entités JPA | `model/PatientRecord`, `model/MedicalRestriction`, `model/AllowedExercise`, `model/RestrictionType` |
+| Entités JPA | `model/PatientRecord`, `model/MedicalRestriction`, `model/RestrictionType` |
 | Repository | `repository/PatientRecordRepository` (`findByPatientExternalId`) |
 | Service métier | `service/MedicalClearanceService` |
 | Exception → SOAP Fault | `service/PatientNotFoundException` (`@SoapFault(SENDER)`) |
 | Endpoint | `endpoint/MedicalClearanceEndpoint` (`@Endpoint`, `@PayloadRoot`) |
 | WSDL | `config/WebServiceConfig` (`DefaultWsdl11Definition`, bean `mon-service`) |
 | Données test | `config/DataInitializer` |
-| Plugin JAXB | `pom.xml` (`jaxb-maven-plugin` 4.0.12, Java 21, spring-boot 4.1.1) |
+| Plugin JAXB | `pom.xml` (`org.codehaus.mojo:jaxb2-maven-plugin:4.2.0`, Java 21, Spring Boot 4.1.1) |
 
 ## 4. Données de test (conformes au sujet)
 
 | patient_external_id | max_heart_rate | clearance_expiry_date | Restrictions | allowed_exercises |
 |---|---|---|---|---|
-| PAT001 | 160 | 2027-12-31 | KNEE / AVOID_IMPACT ; BACK / NO_HEAVY_LIFTING | EX001, EX003 |
-| PAT002 | 150 | 2027-06-30 | SHOULDER / NO_HEAVY_LIFTING | EX002, EX004, EX006 |
-| PAT003 | 165 | 2027-01-15 | (aucune) | EX001 |
+| PAT001 | 160 | 2027-12-31 | KNEE / AVOID_IMPACT ; BACK / NO_HEAVY_LIFTING | vide (aucune source SQL prévue) |
+| PAT002 | 150 | 2027-06-30 | SHOULDER / NO_HEAVY_LIFTING | vide (aucune source SQL prévue) |
 | PAT999 | — | — | **absent volontairement** → sert à tester la SOAP Fault | |
 
 ## 5. Côté Node.js — fichiers ajoutés (sans toucher au reste)
@@ -74,6 +73,8 @@ Node.js est uniquement un **adaptateur SOAP** (appel WSDL → mapping XML/JSON �
 | `backend/models/Exercice.js` | Ajout champs optionnel `codeExterne` (code EXxxx partagé avec le legacy) |
 | `backend/server.js` | Ajout de `['/api/medical', './routes/medicalRoutes']` |
 | `package.json` | Dépendance `soap` (`^1.13.0`) |
+| `.env.example` | Variables d'environnement documentées (dont `MEDICAL_WSDL_URL`) |
+| `backend/config/seeder.js` | Seed complet; Jean est rattaché à `PAT001` |
 
 ### Flux de la route `GET /api/medical/profile`
 
@@ -98,20 +99,24 @@ Scénario du sujet : « avant de valider un programme intense, vérifier les res
 | Règle | Condition de blocage | Exemple |
 |---|---|---|
 | Clearance expirée | `clearanceExpiryDate < aujourd'hui` | blocage sur tous les exercices |
-| `allowedExercises` (liste blanche) | exercice doté d'un `codeExterne` (EXxxx) absent de la liste | `EX002` non autorisé pour PAT001 |
+| Liste blanche d'exercices | Non appliquée : le sujet ne fournit aucune table source | `allowedExercises` reste vide; les restrictions articulaires restent appliquées |
 | `AVOID_IMPACT` | exercice `cardio` **ou** muscles touchant l'articulation (KNEE/BACK/SHOULDER/...) | Squat (quadriceps) bloqué pour KNEE |
 | `NO_HEAVY_LIFTING` | muscles touchant l'articulation **et** `poidsKg > 20` | aucun sur exercices légers |
 
 5. Réponse : `decision` (`AUTORISE`/`BLOQUE`), `resume` (exercices/autorises/bloques), détails des blocages (exercice, séance, raisons) + rappel du profil médical
 6. Un même exercice présent dans plusieurs séances n'est compté qu'une fois (dédoublonnage par `exercice._id`)
 
-## 6. Résultats des tests (exécutés)
+## 6. Résultats des tests
+
+Validation rejouée le 13 octobre 2026 : `mvnw.cmd clean test` (1 test réussi),
+`node TESTER_INTEGRATION_SOAP.js --route` (32 réussites, 0 échec). Ce parcours
+vérifie les échanges SOAP, l'upsert MongoDB et la validation de programme.
 
 ### Test 1 — PAT001 (2 restrictions)
 ```
 HTTP 200 — data.maxHeartRate = 160
 jointRestrictions = [ KNEE/AVOID_IMPACT, BACK/NO_HEAVY_LIFTING ]
-allowedExercises  = [ EX001, EX003 ]
+allowedExercises  = []
 clearanceExpiryDate = "2027-12-31"
 ```
 XML réel : voir `integration-soap/xml/PAT001-response.xml`
@@ -120,7 +125,7 @@ XML réel : voir `integration-soap/xml/PAT001-response.xml`
 ```
 HTTP 200 — data.maxHeartRate = 150
 jointRestrictions = [ SHOULDER/NO_HEAVY_LIFTING ]
-allowedExercises  = [ EX002, EX004, EX006 ]
+allowedExercises  = []
 clearanceExpiryDate = "2027-06-30"
 ```
 XML réel : voir `integration-soap/xml/PAT002-response.xml`
@@ -130,25 +135,25 @@ XML réel : voir `integration-soap/xml/PAT002-response.xml`
 - Node : **HTTP 404** `{ "success": false, "message": "SOAP-ENV:Client: Patient inexistant : PAT999" }` (kind = `SOAP_FAULT`)
 
 ### Test 4 — Spring Boot arrêté
-- Node : **HTTP 503** `connect ECONNREFUSED ...:8080`, **le serveur Node ne plante pas** (kind = `SOAP_UNAVAILABLE`)
+- Le contrôleur mappe `SOAP_UNAVAILABLE` vers HTTP 503. Ce scénario n'a pas été rejoué le 13 octobre; l'exemple Postman reste une fixture.
 
 ### Test 5 — MongoDB (upsert)
-- 1ᵉʳ appel (PAT001) : document créé `_id: 6ab518e4...`
-- 2ᵉ appel (PAT002) : **même `_id` mis à jour** (createdAt conservé, updatedAt changé)
+- Appel de la route avec PAT001 : document créé/mis à jour, puis vérifié en MongoDB par le test `--route`.
+- L'index unique sur `userId` assure un seul profil par utilisateur.
 - Collection : `medicalprofiles`
 
 ### Test 6 — Plusieurs restrictions
 - PAT001 avec 2 restrictions (KNEE + BACK) : array de 2 objets correctement mappé.
 
 ### Test 7 — Mapping de la date
-- Spring `LocalDate(2027,12,31)` → XML `2027-12-31` → Node `"2027-12-31T00:00:00.000Z"` → docteur Mongo `Date` (`clearanceExpiryDate`) → JSON `"2027-12-31"`.
+- Spring `LocalDate(2027,12,31)` → XML `2027-12-31` → Node `"2027-12-31T00:00:00.000Z"` → document Mongo `Date` (`clearanceExpiryDate`) → JSON `"2027-12-31"`.
 
 | Cas | Code HTTP | Mécanisme |
 |---|---|---|
 | Patient existe | 200 | réponse SOAP + upsert |
 | Patient inexistant | 404 | SOAP Fault → `kind='SOAP_FAULT'` |
-| Spring arrêté | 503 | `kind='SOAP_UNAVAILABLE'` |
-| Réponse inattendue / date invalide | 502 | validation `normaliserProfilMedical` (`REPONSE_INATTENDUE` / `DATE_INVALIDE`) |
+| Spring arrêté | 503 | `kind='SOAP_UNAVAILABLE'` (implémenté; non rejoué le 13 octobre) |
+| Réponse inattendue / date invalide | 502 | validation implémentée dans `normaliserProfilMedical` (non rejouée le 13 octobre) |
 | Erreur MongoDB | 500 | catch du controller |
 | Utilisateur sans `patientExternalId` | 400 | contrôle en amont de l'appel SOAP |
 
@@ -159,13 +164,37 @@ XML réel : voir `integration-soap/xml/PAT002-response.xml`
 cd legacy-medical-api && .\mvnw.cmd spring-boot:run
 
 # 2. Terminal B — Node (http://localhost:5000)
-cd Fitnessapp/fitness-app && npm install && npm run dev
+cd Fitnessapp/fitness-app
+npm install
+copy .env.example .env     # ou : cp .env.example .env
+npm run seed               # réinitialise les collections de démo puis crée Jean => PAT001
+npm run dev
 
 # 3. Postman : importer integration-soap/collection-postman.json
-#    (login med@example.com / Password123 puis GET /api/medical/profile)
-#    La collection contient les requêtes ET les réponses XML complètes :
-#    PAT001 (succès), PAT002 (succès), PAT999 (SOAP Fault), login (JWT), profil synchronisé.
+#    (login jean@gmail.com / jean1234 puis GET /api/medical/profile)
+#    La collection contient les requêtes ET les réponses enregistrées :
+#    WSDL, PAT001 (succès), PAT002 (succès), PAT999 (SOAP Fault),
+#    login (JWT), profil synchronisé + les 2 cas d'erreur (404 / 503).
 ```
+
+### Compte de démonstration
+
+`npm run seed` lance `backend/config/seeder.js` et crée `jean@gmail.com / jean1234`
+(rôle `sportif`) avec `patientExternalId = PAT001`. Il efface puis recrée les
+collections de démonstration (utilisateurs, exercices, séances, détails,
+historiques et objectifs); ne le lance pas sur une base contenant des données à
+conserver. Le champ SOAP `allowedExercises` est vide car le sujet ne prévoit pas
+de table SQL pour l'alimenter.
+
+### Test automatisé
+
+```bash
+node TESTER_INTEGRATION_SOAP.js           # 10 assertions sur le client SOAP
+node TESTER_INTEGRATION_SOAP.js --route   # + routes REST et écriture MongoDB
+```
+
+Le script réutilise l'utilisateur déjà rattaché à `PAT001` (celui du seed), ce qui
+respecte l'index unique `patientExternalId` du modèle `Utilisateur`.
 
 Appel direct avec curl :
 ```bash
@@ -177,7 +206,7 @@ curl -X POST http://localhost:8080/ws -H "Content-Type: text/xml; charset=utf-8"
 
 1. **Pourquoi deux applications ?** L'API médicale est « legacy » (Spring Boot/SOAP/SQL), l'appli fitness est moderne (Node/Express/MongoDB). On ne réécrit pas la logique médicale : Node la consomme via SOAP.
 
-2. **Comment génère-t-on les classes Java ?** Le `jaxb-maven-plugin` lit le XSD (`medical-clearance.xsd`) et génère les classes dans `com.legacymedical.ws` à chaque build (`target/generated-sources/xjc`).
+2. **Comment génère-t-on les classes Java ?** Le `jaxb2-maven-plugin` (`org.codehaus.mojo`, 4.2.0) lit le XSD (`medical-clearance.xsd`) et le binding `binding.xjb`, puis génère les classes dans `com.legacymedical.ws` au build (`target/generated-sources/xjc`).
 
 3. **Comment Spring WS construit le WSDL ?** `DefaultWsdl11Definition` + `SimpleXsdSchema` au démarrage ; URL = nom du bean (`mon-service`) + `/ws/`. `setTransformWsdlLocations(true)` adapte l'URL à la requête.
 
@@ -189,7 +218,7 @@ curl -X POST http://localhost:8080/ws -H "Content-Type: text/xml; charset=utf-8"
 
 7. **Et si Spring est éteint ?** `createClientAsync` rejette → `SOAP_UNAVAILABLE` → HTTP 503, l'API Fitness continue de vivre.
 
-8. **Pourquoi `allowed_exercise` ?** Le champ `allowedExercises` est exigé par le sujet mais aucune table SQL n'est décrite pour le fournir → décision documentée d'ajouter cette 3ᵉ table minimale.
+8. **Pourquoi `allowedExercises` est vide ?** Le champ figure dans la réponse exigée, mais aucune table SQL source n'est décrite. Le contrat conserve donc le champ sans ajouter une troisième table ni inventer des autorisations.
 
 9. **Comment la date traverse-t-elle le système ?** `LocalDate` Java → (JAXB `LocalDateAdapter` + binding) `xs:date` → XML `"2027-12-31"` → JS → `Date` Mongo → rendu `yyyy-MM-dd`. Aucun décalage de fuseau grâce à la normalisation UTC.
 
@@ -203,12 +232,12 @@ curl -X POST http://localhost:8080/ws -H "Content-Type: text/xml; charset=utf-8"
 |---|---|---|
 | Spring Boot `spring-boot-starter-data-jpa` + base SQL | ✅ | `pom.xml`, H2 (`jdbc:h2:mem:medicaldb`) |
 | WSDL/XSD conforme (types + namespaces) | ✅ | `medical-clearance.xsd` (`targetNamespace` + `qualified`) |
-| Génération JAXB | ✅ | `jaxb-maven-plugin:4.0.12` → `com.legacymedical.ws` |
+| Génération JAXB | ✅ | `jaxb2-maven-plugin:4.2.0` → `com.legacymedical.ws` |
 | `@Endpoint` + `@PayloadRoot` (+ `@RequestPayload`/`@ResponsePayload`) | ✅ | `endpoint/MedicalClearanceEndpoint` |
 | Endpoint WSDL accessible | ✅ | `http://localhost:8080/ws/mon-service.wsdl` |
 | Node `npm install soap` + `createClientAsync` | ✅ | `package.json` (`soap ^1.13.0`), `medicalSoapService.js` |
 | Consommation asynchrone + mapping vers modèles Mongoose | ✅ | `medicalController.js` → upsert `MedicalProfile` |
-| Capture de la SOAP Fault / pannes | ✅ | 404 (fault) / 503 (Spring coupé) / 502 (réponse invalide) |
+| Capture de la SOAP Fault / pannes | Partielle | SOAP Fault 404 rejouée; branches 503/502 implémentées mais non rejouées le 13 octobre |
 | Non-duplication de la logique métier | ✅ | logique dans `MedicalClearanceService` (Spring), Node = adaptateur |
 
 ### Critères d'évaluation (pondération du sujet)
@@ -218,10 +247,10 @@ curl -X POST http://localhost:8080/ws -H "Content-Type: text/xml; charset=utf-8"
 | **Qualité du Contrat WSDL/XSD (50%)** : typage (`xs:int`/`xs:date`/enum), namespaces, fidélité aux tables SQL | Conforme |
 | **Consommation & Mapping (20%)** : appel async, XML→JSON propre avant insertion | Conforme (normalisation + validation types/date) |
 | **Intégration & Réutilisation (20%)** : réutilise `protect` + modèle `Utilisateur` existants | Conforme |
-| **Gestion des erreurs** : SOAP Fault et panne Spring testées | Conforme (testé : 404/503/502) |
+| **Gestion des erreurs** | SOAP Fault testée; panne Spring et réponse invalide non rejouées dans cette validation |
 
 ### Points à assumer en soutenance
 
-1. **Nom du plugin JAXB** : le sujet cite `jaxb2-maven-plugin`, le projet utilise `org.jvnet.jaxb:jaxb-maven-plugin:4.0.12` (successeur compatible Java 21 + Jakarta XML Binding). Comportement identique : lecture du XSD → génération des classes au build.
+1. **Nom du plugin JAXB** : le projet utilise le plugin demandé, `org.codehaus.mojo:jaxb2-maven-plugin:4.2.0`; sa configuration charge le XSD et le binding JAXB.
 2. **Input XML `patientExternalId`** : le sujet parle d'un « userId » ; le contrat expose `patientExternalId`, cohérent avec la colonne SQL `patient_external_id` (aucune table `user` n'existe côté legacy). L'utilisateur Node (`patientExternalId` sur l'`Utilisateur`) est relié à ce patient.
-3. **3ᵉ table `allowed_exercise`** : ajoutée car le champ `allowedExercises` est exigé mais aucune table source n'est décrite (voir décision §2).
+3. **`allowedExercises` sans table source** : le champ du contrat reste vide; aucune troisième table n'est créée. La validation Node n'applique pas de whitelist sur une liste vide.

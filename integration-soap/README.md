@@ -6,7 +6,7 @@ Ce dossier contient tous les livrables de l'intégration SOAP du **Groupe 3 – 
 
 | Fichier | Rôle |
 |---|---|
-| `collection-postman.json` | Collection Postman importable (6 requêtes) |
+| `collection-postman.json` | Collection Postman importable (7 requêtes, requêtes + réponses d'exemple) |
 | `xml/mon-service.wsdl` | Copie du WSDL exposé par Spring Boot |
 | `xml/PAT001-request.xml` | Requête SOAP PAT001 (succès) |
 | `xml/PAT001-response.xml` | Réponse SOAP PAT001 (160, KNEE+BACK, 2027-12-31) |
@@ -31,6 +31,8 @@ Ce dossier contient tous les livrables de l'intégration SOAP du **Groupe 3 – 
    ```bash
    cd Fitnessapp/fitness-app
    npm install
+   cp .env.example .env    # Windows : copy .env.example .env
+   npm run seed            # obligatoire : crée les comptes de démonstration
    npm run dev
    ```
 
@@ -41,13 +43,32 @@ Ce dossier contient tous les livrables de l'intégration SOAP du **Groupe 3 – 
 3. Dans la requête **5**, lancer le login, puis copier le `token` dans une variable d'environnement Postman `token`.
 4. Lancer la requête **6** : `GET http://localhost:5000/api/medical/profile` avec le header `Authorization: Bearer {{token}}`.
    La réponse JSON contient le MedicalProfile **sauvegardé dans MongoDB** après l'appel SOAP.
+   La requête **7** valide un programme d'entraînement contre ces restrictions.
+
+Chaque requête de la collection contient une ou plusieurs **réponses d'exemple**
+réellement obtenues (XML SOAP complet pour 1 à 4, JSON pour 5 à 7, y compris les
+cas d'erreur 404 SOAP Fault et 503 Spring Boot arrêté).
 
 ## Tester avec SoapUI
 
 Créer un projet SOAP avec l'URL `http://localhost:8080/ws/mon-service.wsdl`, puis coller le contenu d'un `*-request.xml` dans la requête `GetMedicalClearanceAndRestrictions`.
 
-## Utilisateur de test créé pour l'intégration
+## Test automatisé de l'intégration
 
-- Email : `med@example.com`
-- Mot de passe : `Password123`
-- `patientExternalId` associé : `PAT001`
+```bash
+# Spring Boot doit tourner sur :8080
+node TESTER_INTEGRATION_SOAP.js           # tests du client SOAP seul
+node TESTER_INTEGRATION_SOAP.js --route   # + les routes REST et MongoDB (appli Node sur :5000)
+```
+
+## Compte de démonstration (créé par `npm run seed`)
+
+- Email : `jean@gmail.com`
+- Mot de passe : `jean1234`
+- Rôle : `sportif`
+- `patientExternalId` associé : `PAT001` (dossier seedé dans `legacy-medical-api`)
+
+`npm run seed` efface puis recrée les collections de démonstration; ne l'exécute
+pas sur une base contenant des données à conserver. Le champ SOAP
+`allowedExercises` est vide, car le sujet ne définit aucune table SQL pour
+l'alimenter.

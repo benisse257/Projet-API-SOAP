@@ -33,7 +33,7 @@ const medicalSoapService = require('./backend/services/medicalSoapService');
 
 const WSDL_URL = process.env.MEDICAL_WSDL_URL || 'http://localhost:8080/ws/mon-service.wsdl';
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/fitness-app';
-const API_URL = 'http://localhost:5000';
+const API_URL = process.env.SOAP_TEST_API_URL || 'http://localhost:5000';
 
 const TESTER_ROUTE = process.argv.includes('--route');
 
@@ -75,7 +75,7 @@ async function testerSoapDirect() {
         p.jointRestrictions[1].restrictionType === 'NO_HEAVY_LIFTING',
       JSON.stringify(p.jointRestrictions)
     );
-    verifier('PAT001 — allowedExercises = EX001, EX003', JSON.stringify(p.allowedExercises) === JSON.stringify(['EX001', 'EX003']));
+    verifier('PAT001 — allowedExercises vide (aucune table source dans le sujet)', p.allowedExercises.length === 0);
     verifier(
       'PAT001 — clearanceExpiryDate = 2027-12-31',
       p.clearanceExpiryDate.toISOString().slice(0, 10) === '2027-12-31',
@@ -94,7 +94,7 @@ async function testerSoapDirect() {
         p.jointRestrictions[0].restrictionType === 'NO_HEAVY_LIFTING',
       JSON.stringify(p.jointRestrictions)
     );
-    verifier('PAT002 — allowedExercises = EX002, EX004, EX006', JSON.stringify(p.allowedExercises) === JSON.stringify(['EX002', 'EX004', 'EX006']));
+    verifier('PAT002 — allowedExercises vide (aucune table source dans le sujet)', p.allowedExercises.length === 0);
     verifier(
       'PAT002 — clearanceExpiryDate = 2027-06-30',
       p.clearanceExpiryDate.toISOString().slice(0, 10) === '2027-06-30',
@@ -132,24 +132,48 @@ async function requeteHttp(method, chemin, body, token) {
   return { status: res.status, json: await res.json() };
 }
 
+/**
+ * Récupère (ou crée) l'utilisateur servant aux tests HTTP.
+ * Réutilise en priorité l'utilisateur seedé rattaché à PAT001 pour ne pas
+ * entrer en conflit avec l'index unique `patientExternalId` du modèle Utilisateur.
+ * @returns {Promise<{user: Object, email: string, motDePasse: string}>}
+ */
+async function obtenirUtilisateurTest() {
+  const motsDePasseConnus = {
+    'alice@example.com': 'Password123',
+    'jean@gmail.com': 'jean1234',
+    'med@example.com': 'Password123'
+  };
+  let user =
+    (await Utilisateur.findOne({ patientExternalId: 'PAT001' })) ||
+    (await Utilisateur.findOne({ email: { $in: ['alice@example.com', 'jean@gmail.com'] } }));
+
+  if (!user) {
+    user = new Utilisateur({
+      nom: 'Patient test',
+      email: 'med@example.com',
+      motDePasse,
+      role: 'sportif',
+      patientExternalId: 'PAT001'
+    });
+  }
+  const motDePasse = motsDePasseConnus[user.email] || 'Password123';
+  user.patientExternalId = 'PAT001';
+  await user.save();
+  ok('Utilisateur de test prêt', `${user.email} -> patientExternalId=PAT001`);
+
+  return { user, email: user.email, motDePasse };
+}
+
 async function testerRoute() {
   console.log('\n=== PARTIE 2 : Route GET /api/medical/profile (Node :5000 -> SOAP -> MongoDB) ===\n');
 
-  // Utilitaires de test en base + utilisateur lié à PAT001
-  const user = await Utilisateur.findOne({ email: 'med@example.com' });
-  const testUser = user || new Utilisateur({
-    nom: 'Patient test',
-    email: 'med@example.com',
-    motDePasse: 'Password123',
-    role: 'sportif'
-  });
-  testUser.patientExternalId = 'PAT001';
-  await testUser.save();
-  ok('Utilisateur de test prêt', `med@example.com -> patientExternalId=PAT001`);
+  // Utilisateur lié à PAT001 (seedé si possible, sinon créé)
+  const { user: testUser, email, motDePasse } = await obtenirUtilisateurTest();
 
   try {
     // Login
-    const login = await requeteHttp('POST', '/api/auth/login', { email: 'med@example.com', motDePasse: 'Password123' });
+    const login = await requeteHttp('POST', '/api/auth/login', { email, motDePasse });
     if (!login.json.token) {
       ko('Login JWT', `HTTP ${login.status} : ${JSON.stringify(login.json)}`);
       return;
@@ -190,10 +214,10 @@ async function testerRoute() {
 async function testerValiderProgramme() {
   console.log('\n=== PARTIE 3 : POST /api/medical/validate-program (restrictions → AUTORISE/BLOQUE) ===\n');
 
-  const user = await Utilisateur.findOne({ email: 'med@example.com' });
+  const { user, email, motDePasse } = await obtenirUtilisateurTest();
   if (!user) { ko('Utilisateur de test introuvable'); return; }
 
-  const login = await requeteHttp('POST', '/api/auth/login', { email: 'med@example.com', motDePasse: 'Password123' });
+  const login = await requeteHttp('POST', '/api/auth/login', { email, motDePasse });
   if (!login.json.token) { ko('Login JWT (partie 3)', `HTTP ${login.status}`); return; }
   const token = login.json.token;
 
@@ -219,7 +243,7 @@ async function testerValiderProgramme() {
     { seance: s3._id, exercice: exGainage._id }
   ]);
 
-  // Scénario 1 : PAT001 (KNEE/AVOID_IMPACT, BACK/NO_HEAVY_LIFTING, allowed EX001/EX003) => BLOQUE
+  // Scénario 1 : PAT001 (KNEE/AVOID_IMPACT, BACK/NO_HEAVY_LIFTING) => BLOQUE
   user.patientExternalId = 'PAT001';
   await user.save();
 
@@ -240,10 +264,10 @@ async function testerValiderProgramme() {
 
   verifier('PAT001 — Squat bloqué (KNEE/AVOID_IMPACT)', nomBloqueRaison('Squat', 'KNEE'), '');
   verifier('PAT001 — Course rapide bloquée (cardio à impact)', nomBloqueRaison('Course rapide', 'AVOID_IMPACT'), '');
-  verifier('PAT001 — Développé couché bloqué (EX002 non autorisé)', nomBloqueRaison('Développé couché', 'non autorise'), '');
-  verifier('PAT001 — Extension du dos bloquée (EX005 non autorisé)', nomBloqueRaison('Extension du dos', 'non autorise'), '');
+  verifier('PAT001 — liste allowedExercises vide sans whitelist SQL', !nomBloque('Développé couché'), '');
+  verifier('PAT001 — liste vide ne bloque pas EX005 par défaut', !nomBloque('Extension du dos'), '');
   verifier('PAT001 — Gainage autorisé', !nomBloque('Gainage'), '');
-  verifier('PAT001 — Étirement du dos autorisé (EX003 autorisé, pas de charge lourde)', !nomBloque('Étirement du dos'), '');
+  verifier('PAT001 — Étirement du dos autorisé (pas de conflit médical)', !nomBloque('Étirement du dos'), '');
 
   // Scénario 2 : PAT002 (SHOULDER/NO_HEAVY_LIFTING) avec un programme sans conflit => AUTORISE
   user.patientExternalId = 'PAT002';

@@ -71,25 +71,24 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>org.jvnet.jaxb</groupId>
-				<artifactId>jaxb-maven-plugin</artifactId>
-				<version>4.0.12</version>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<version>4.2.0</version>
 				<executions>
 					<execution>
 						<goals>
-							<goal>generate</goal>
+							<goal>xjc</goal>
 						</goals>
 					</execution>
 				</executions>
 				<configuration>
-					<schemaDirectory>src/main/resources/xsd</schemaDirectory>
-					<schemaIncludes>
-						<include>*.xsd</include>
-					</schemaIncludes>
-					<bindingDirectory>src/main/resources/xsd</bindingDirectory>
-					<bindingIncludes>
-						<include>*.xjb</include>
-					</bindingIncludes>
+					<sources>
+						<source>src/main/resources/xsd/medical-clearance.xsd</source>
+					</sources>
+					<xjbSources>
+						<xjbSource>src/main/resources/xsd/binding.xjb</xjbSource>
+					</xjbSources>
+					<outputDirectory>${project.build.directory}/generated-sources/xjc</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>

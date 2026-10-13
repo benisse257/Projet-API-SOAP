@@ -56,7 +56,7 @@ const restrictionsPourExercice = (restrictions, detail, exercice, allowedExercis
 
   // 1. Liste blanche du contrat SOAP (exercice codeExterne renseigne uniquement)
   const codeExterne = exercice.codeExterne;
-  if (codeExterne && !(allowedExercises || []).includes(String(codeExterne))) {
+  if (codeExterne && allowedExercises?.length > 0 && !allowedExercises.includes(String(codeExterne))) {
     motifs.push(
       `Exercice non autorise par le medecin (allowedExercises : ${(allowedExercises || []).join(', ') || 'aucun'})`
     );

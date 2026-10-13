@@ -26,9 +26,6 @@ public class PatientRecord {
     @OneToMany(mappedBy = "patientRecord", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MedicalRestriction> restrictions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "patientRecord", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AllowedExercise> allowedExercises = new ArrayList<>();
-
     public Long getId() {
         return id;
     }
@@ -69,11 +66,4 @@ public class PatientRecord {
         this.restrictions = restrictions;
     }
 
-    public List<AllowedExercise> getAllowedExercises() {
-        return allowedExercises;
-    }
-
-    public void setAllowedExercises(List<AllowedExercise> allowedExercises) {
-        this.allowedExercises = allowedExercises;
-    }
 }

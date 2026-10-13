@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.legacymedical.model.AllowedExercise;
 import com.legacymedical.model.MedicalRestriction;
 import com.legacymedical.model.PatientRecord;
 import com.legacymedical.model.RestrictionType;
@@ -36,8 +35,6 @@ public class DataInitializer implements CommandLineRunner {
         pat001.setClearanceExpiryDate(LocalDate.of(2027, 12, 31));
         addRestriction(pat001, "KNEE", RestrictionType.AVOID_IMPACT);
         addRestriction(pat001, "BACK", RestrictionType.NO_HEAVY_LIFTING);
-        addAllowedExercise(pat001, "EX001");
-        addAllowedExercise(pat001, "EX003");
         repository.save(pat001);
 
         PatientRecord pat002 = new PatientRecord();
@@ -45,17 +42,7 @@ public class DataInitializer implements CommandLineRunner {
         pat002.setMaxHeartRate(150);
         pat002.setClearanceExpiryDate(LocalDate.of(2027, 6, 30));
         addRestriction(pat002, "SHOULDER", RestrictionType.NO_HEAVY_LIFTING);
-        addAllowedExercise(pat002, "EX002");
-        addAllowedExercise(pat002, "EX004");
-        addAllowedExercise(pat002, "EX006");
         repository.save(pat002);
-
-        PatientRecord pat003 = new PatientRecord();
-        pat003.setPatientExternalId("PAT003");
-        pat003.setMaxHeartRate(165);
-        pat003.setClearanceExpiryDate(LocalDate.of(2027, 1, 15));
-        addAllowedExercise(pat003, "EX001");
-        repository.save(pat003);
     }
 
     private void addRestriction(PatientRecord record, String bodyPart, RestrictionType type) {
@@ -64,12 +51,5 @@ public class DataInitializer implements CommandLineRunner {
         restriction.setRestrictionType(type);
         restriction.setPatientRecord(record);
         record.getRestrictions().add(restriction);
-    }
-
-    private void addAllowedExercise(PatientRecord record, String exerciseId) {
-        AllowedExercise exercise = new AllowedExercise();
-        exercise.setExerciseId(exerciseId);
-        exercise.setPatientRecord(record);
-        record.getAllowedExercises().add(exercise);
     }
 }
