@@ -1,5 +1,11 @@
 # Rapport d'intégration SOAP — Groupe 3 (Fitness Tracking / Medical API)
 
+**Périmètre :** `legacy-medical-api/` et `Fitnessapp/fitness-app/`
+
+**Dépôt :** https://github.com/benisse257/Projet-API-SOAP (`main`)
+
+**Mise à jour :** 13 octobre 2026
+
 ## 1. Architecture cible (réalisée)
 
 ```
@@ -111,6 +117,9 @@ Scénario du sujet : « avant de valider un programme intense, vérifier les res
 Validation rejouée le 13 octobre 2026 : `mvnw.cmd clean test` (1 test réussi),
 `node TESTER_INTEGRATION_SOAP.js --route` (32 réussites, 0 échec). Ce parcours
 vérifie les échanges SOAP, l'upsert MongoDB et la validation de programme.
+Les scénarios HTTP 503 et 502 ont ensuite été vérifiés séparément : Spring arrêté
+pour le 503; erreur `DATE_INVALIDE` simulée à la frontière du service pour le 502.
+Le parsing de XML SOAP malformé n'a pas été testé de bout en bout.
 
 ### Test 1 — PAT001 (2 restrictions)
 ```
@@ -135,7 +144,7 @@ XML réel : voir `integration-soap/xml/PAT002-response.xml`
 - Node : **HTTP 404** `{ "success": false, "message": "SOAP-ENV:Client: Patient inexistant : PAT999" }` (kind = `SOAP_FAULT`)
 
 ### Test 4 — Spring Boot arrêté
-- Le contrôleur mappe `SOAP_UNAVAILABLE` vers HTTP 503. Ce scénario n'a pas été rejoué le 13 octobre; l'exemple Postman reste une fixture.
+- Spring a été arrêté pendant que Node et MongoDB restaient actifs. L'appel authentifié `GET /api/medical/profile` a renvoyé **HTTP 503**; Node est resté actif.
 
 ### Test 5 — MongoDB (upsert)
 - Appel de la route avec PAT001 : document créé/mis à jour, puis vérifié en MongoDB par le test `--route`.
@@ -148,12 +157,16 @@ XML réel : voir `integration-soap/xml/PAT002-response.xml`
 ### Test 7 — Mapping de la date
 - Spring `LocalDate(2027,12,31)` → XML `2027-12-31` → Node `"2027-12-31T00:00:00.000Z"` → document Mongo `Date` (`clearanceExpiryDate`) → JSON `"2027-12-31"`.
 
+### Test 8 — Date invalide (HTTP 502)
+- Une erreur `DATE_INVALIDE` a été simulée au retour du service SOAP; le contrôleur a répondu **HTTP 502**.
+- Ce test valide le mapping d'erreur du contrôleur, pas le parsing d'une enveloppe SOAP XML malformée.
+
 | Cas | Code HTTP | Mécanisme |
 |---|---|---|
 | Patient existe | 200 | réponse SOAP + upsert |
 | Patient inexistant | 404 | SOAP Fault → `kind='SOAP_FAULT'` |
-| Spring arrêté | 503 | `kind='SOAP_UNAVAILABLE'` (implémenté; non rejoué le 13 octobre) |
-| Réponse inattendue / date invalide | 502 | validation implémentée dans `normaliserProfilMedical` (non rejouée le 13 octobre) |
+| Spring arrêté | 503 | `kind='SOAP_UNAVAILABLE'` (testé le 13 octobre) |
+| Réponse inattendue / date invalide | 502 | `DATE_INVALIDE` simulée au niveau du contrôleur le 13 octobre; enveloppe SOAP malformée non testée de bout en bout |
 | Erreur MongoDB | 500 | catch du controller |
 | Utilisateur sans `patientExternalId` | 400 | contrôle en amont de l'appel SOAP |
 
@@ -230,14 +243,14 @@ curl -X POST http://localhost:8080/ws -H "Content-Type: text/xml; charset=utf-8"
 
 | Exigence (sujet) | Statut | Où |
 |---|---|---|
-| Spring Boot `spring-boot-starter-data-jpa` + base SQL | ✅ | `pom.xml`, H2 (`jdbc:h2:mem:medicaldb`) |
-| WSDL/XSD conforme (types + namespaces) | ✅ | `medical-clearance.xsd` (`targetNamespace` + `qualified`) |
-| Génération JAXB | ✅ | `jaxb2-maven-plugin:4.2.0` → `com.legacymedical.ws` |
-| `@Endpoint` + `@PayloadRoot` (+ `@RequestPayload`/`@ResponsePayload`) | ✅ | `endpoint/MedicalClearanceEndpoint` |
+| Spring Boot `spring-boot-starter-data-jpa` + base SQL | ✅ | `legacy-medical-api/pom.xml`, H2 (`jdbc:h2:mem:medicaldb`) |
+| WSDL/XSD (types + namespaces) | ✅ | `legacy-medical-api/src/main/resources/xsd/medical-clearance.xsd` |
+| Génération JAXB | ✅ | `legacy-medical-api/pom.xml` (`jaxb2-maven-plugin:4.2.0`) → `com.legacymedical.ws` |
+| `@Endpoint` + `@PayloadRoot` (+ payload annotations) | ✅ | `legacy-medical-api/src/main/java/com/legacymedical/endpoint/MedicalClearanceEndpoint.java` |
 | Endpoint WSDL accessible | ✅ | `http://localhost:8080/ws/mon-service.wsdl` |
-| Node `npm install soap` + `createClientAsync` | ✅ | `package.json` (`soap ^1.13.0`), `medicalSoapService.js` |
-| Consommation asynchrone + mapping vers modèles Mongoose | ✅ | `medicalController.js` → upsert `MedicalProfile` |
-| Capture de la SOAP Fault / pannes | Partielle | SOAP Fault 404 rejouée; branches 503/502 implémentées mais non rejouées le 13 octobre |
+| Node `soap` + `createClientAsync` | ✅ | `Fitnessapp/fitness-app/package.json`, `backend/services/medicalSoapService.js` |
+| Consommation asynchrone + mapping Mongoose | ✅ | `backend/controllers/medicalController.js` → upsert `backend/models/MedicalProfile.js` |
+| Capture de la SOAP Fault / pannes | Partielle | SOAP Fault 404 et panne Spring 503 testées; mapping 502 testé avec erreur simulée; parsing XML malformé restant à tester |
 | Non-duplication de la logique métier | ✅ | logique dans `MedicalClearanceService` (Spring), Node = adaptateur |
 
 ### Critères d'évaluation (pondération du sujet)
@@ -247,10 +260,36 @@ curl -X POST http://localhost:8080/ws -H "Content-Type: text/xml; charset=utf-8"
 | **Qualité du Contrat WSDL/XSD (50%)** : typage (`xs:int`/`xs:date`/enum), namespaces, fidélité aux tables SQL | Conforme |
 | **Consommation & Mapping (20%)** : appel async, XML→JSON propre avant insertion | Conforme (normalisation + validation types/date) |
 | **Intégration & Réutilisation (20%)** : réutilise `protect` + modèle `Utilisateur` existants | Conforme |
-| **Gestion des erreurs** | SOAP Fault testée; panne Spring et réponse invalide non rejouées dans cette validation |
+| **Gestion des erreurs** | 404 et 503 testés en HTTP; 502 testé avec erreur contrôlée simulée; SOAP XML malformé non testé de bout en bout |
 
 ### Points à assumer en soutenance
 
 1. **Nom du plugin JAXB** : le projet utilise le plugin demandé, `org.codehaus.mojo:jaxb2-maven-plugin:4.2.0`; sa configuration charge le XSD et le binding JAXB.
 2. **Input XML `patientExternalId`** : le sujet parle d'un « userId » ; le contrat expose `patientExternalId`, cohérent avec la colonne SQL `patient_external_id` (aucune table `user` n'existe côté legacy). L'utilisateur Node (`patientExternalId` sur l'`Utilisateur`) est relié à ce patient.
 3. **`allowedExercises` sans table source** : le champ du contrat reste vide; aucune troisième table n'est créée. La validation Node n'applique pas de whitelist sur une liste vide.
+
+## 10. Checklist des livrables de l'enseignant
+
+| Livrable demandé | Fichier / preuve dans le dépôt | État |
+|---|---|---|
+| Code source complet de l'application Fitness existante | `Fitnessapp/fitness-app/` (backend, frontend, `package.json`) | Présent |
+| Micro-projet legacy Spring Boot autonome | `legacy-medical-api/` (`pom.xml`, Maven Wrapper, sources Java) | Présent |
+| Dépendances Spring Web Services, JPA et base SQL | `legacy-medical-api/pom.xml`; configuration H2 dans `src/main/resources/application.properties` | Présent; H2 en mémoire |
+| Deux tables SQL du scénario | `model/PatientRecord.java`, `model/MedicalRestriction.java`, initialisation dans `config/DataInitializer.java` | Présent; PAT001/PAT002, PAT999 absent |
+| Contrat XSD et génération JAXB | `src/main/resources/xsd/medical-clearance.xsd`, `binding.xjb`, plugin `jaxb2-maven-plugin` dans `pom.xml` | Présent; classes générées au build |
+| Endpoint SOAP, repository, service et WSDL | `endpoint/MedicalClearanceEndpoint.java`, `repository/PatientRecordRepository.java`, `service/MedicalClearanceService.java`, `config/WebServiceConfig.java` | Présent; WSDL `/ws/mon-service.wsdl` |
+| Client SOAP Node asynchrone et mapping XML → objet JS | `backend/services/medicalSoapService.js` (`soap.createClientAsync`) | Présent |
+| Persistance du profil médical côté MongoDB | `backend/models/MedicalProfile.js`, `backend/controllers/medicalController.js` (upsert), `backend/routes/medicalRoutes.js` | Présent; vérifié par test d'intégration |
+| Gestion des SOAP Fault et des indisponibilités | `service/PatientNotFoundException.java`, `medicalSoapService.js`, `medicalController.js` | 404 SOAP Fault et 503 testés; 502 testé par simulation contrôlée |
+| Collection Postman et exemples de requêtes/réponses XML | `integration-soap/collection-postman.json`, `integration-soap/xml/` | Présent; succès PAT001/PAT002 et SOAP Fault PAT999 |
+| Tests automatisés et rapport d'exécution | `legacy-medical-api/src/test/`, `Fitnessapp/fitness-app/TESTER_INTEGRATION_SOAP.js` | Maven : 1 test réussi; intégration Node : 32 réussites, 0 échec |
+| Documentation de démarrage et de soutenance | `README.md`, `integration-soap/README.md`, présent rapport | Présent |
+| Dépôt Git | [Projet-API-SOAP](https://github.com/benisse257/Projet-API-SOAP), branche `main` | Publié; vérifier que le dépôt est accessible à l'enseignant |
+
+### Éléments à vérifier avant la démonstration
+
+- Démarrer MongoDB, Spring Boot puis Fitness Node.js dans cet ordre; les services doivent écouter sur `27017`, `8080` et `5000`.
+- Le seed `npm run seed` recrée les collections de démonstration; ne pas l'exécuter si la base contient des données à conserver.
+- La requête Postman `POST /api/medical/validate-program` nécessite un `programmeId` réel; le seed ne crée pas de programme. Le script `TESTER_INTEGRATION_SOAP.js --route` crée et nettoie ses propres objets de test.
+- `allowedExercises` est vide car le schéma SQL demandé ne fournit aucune source pour cette liste. Cette interprétation est explicitée dans le XSD et le présent rapport.
+- L'intitulé de l'opération varie dans le sujet (`getMedicalClearance` et `getMedicalClearanceAndRestrictions`); le projet utilise uniformément `getMedicalClearanceAndRestrictions`.
